@@ -13,6 +13,10 @@ from keras.preprocessing.image import ImageDataGenerator
 # this is the complete list of all rotation orders
 xform_orders = [''.join(list(tuple)) for tuple in list(permutations({'x','y','z'}))]
 
+def standardize(x):
+    x -= np.mean(x)
+    x /= np.std(x)
+
 def generate_sample():
 
     # choose a random order
@@ -34,8 +38,7 @@ def generate_sample():
     # experimenting with sin/cos as inputs
     sincos_angles = [scang for angle in error_angles for scang in [math.sin(angle), math.cos(angle)]] 
     x = np.concatenate((matrix.as_dcm().flatten(), np.array(error_angles)))
-    x -= np.mean(x)
-    x /= np.std(x)
+    standardize(x)
     return (x, xform_orders.index(xform_order))
 
 def generate_samples(n):

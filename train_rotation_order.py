@@ -17,24 +17,26 @@ def standardize(x):
     x -= np.mean(x)
     x /= np.std(x)
 
+def random_vector(n, mag):
+    return 2.0 * mag * (0.5-np.random.random(size=n))
+
 def generate_sample():
 
     # choose a random order
     xform_order = random.choice(xform_orders)
 
     # generate three angles
-    # angles = 80.0*(np.random.random(size=3)*2.0 - 1.0)        
-    angles = [0,0,0]
-    for n in range(3):
-        angles[n] = np.random.random() * 10.0 + 0.0
-        if random.choice([True,False]):
-            angles[n] *= -1.0
+    angles = random_vector(3, 10.0)
+
+    # reject if any absolute angle < 0.1 degree
+    if (min(abs(angles)) < 0.01):
+        return generate_sample()
 
     # compose to create rotate matrix
     matrix = R.from_euler(xform_order, angles, degrees=True)
 
     # actual vector is concatenation of flattened matrix + angles
-    error_angles = [(angle+(0.5-random.random())*0.1) for angle in angles]
+    error_angles = angles + random_vector(3, 0.1)
     # experimenting with sin/cos as inputs
     sincos_angles = [scang for angle in error_angles for scang in [math.sin(angle), math.cos(angle)]] 
     x = np.concatenate((matrix.as_dcm().flatten(), np.array(error_angles)))

@@ -30,7 +30,12 @@ def generate_sample():
     matrix = R.from_euler(xform_order, angles, degrees=True)
 
     # actual vector is concatenation of flattened matrix + angles
-    x = np.concatenate((matrix.as_dcm().flatten(), np.array([0.08*(ang+random.random()*0.5) for ang in angles])))
+    error_angles = [(angle+(0.5-random.random())*0.1) for angle in angles]
+    # experimenting with sin/cos as inputs
+    sincos_angles = [scang for angle in error_angles for scang in [math.sin(angle), math.cos(angle)]] 
+    x = np.concatenate((matrix.as_dcm().flatten(), np.array(error_angles)))
+    x -= np.mean(x)
+    x /= np.std(x)
     return (x, xform_orders.index(xform_order))
 
 def generate_samples(n):
@@ -41,8 +46,7 @@ x_train, y_train = generate_samples(10000)
 x_test, y_test = generate_samples(1000)
 
 model = Sequential()
-model.add(Dense(32, activation='relu', input_dim=12))
-# model.add(Dropout(0.01))
+model.add(Dense(32, activation='relu', input_dim=x_train.shape[1]))
 model.add(Dense(16, activation='relu'))
 model.add(Dense(16, activation='relu'))
 model.add(Dense(6, activation='softmax'))

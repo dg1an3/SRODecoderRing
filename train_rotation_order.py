@@ -7,7 +7,7 @@ from scipy.spatial.transform import Rotation as R
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, BatchNormalization
-from keras.optimizers import SGD
+from keras.optimizers import SGD, Adam
 from keras.preprocessing.image import ImageDataGenerator
 
 # this is the complete list of all rotation orders
@@ -22,7 +22,7 @@ def generate_sample():
     # angles = 80.0*(np.random.random(size=3)*2.0 - 1.0)        
     angles = [0,0,0]
     for n in range(3):
-        angles[n] = np.random.random() * 30.0 + 1.0
+        angles[n] = np.random.random() * 10.0 + 0.0
         if random.choice([True,False]):
             angles[n] *= -1.0
 
@@ -30,7 +30,7 @@ def generate_sample():
     matrix = R.from_euler(xform_order, angles, degrees=True)
 
     # actual vector is concatenation of flattened matrix + angles
-    x = np.concatenate((matrix.as_dcm().flatten(), np.array([0.08*ang for ang in angles])))
+    x = np.concatenate((matrix.as_dcm().flatten(), np.array([0.08*(ang+random.random()*0.5) for ang in angles])))
     return (x, xform_orders.index(xform_order))
 
 def generate_samples(n):
@@ -49,7 +49,8 @@ model.add(Dense(6, activation='softmax'))
 model.summary()
 
 sgd = SGD(lr=0.1, decay=1e-6, momentum=0.9)
-model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+adam = Adam(lr=0.001, decay=0.0)
+model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy']) 
 
 model.fit(x_train, y_train, epochs=500, batch_size=512)
 score = model.evaluate(x_test, y_test, batch_size=512)

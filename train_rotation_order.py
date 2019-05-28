@@ -51,9 +51,9 @@ x_train, y_train = generate_samples(10000)
 x_test, y_test = generate_samples(1000)
 
 model = Sequential()
-model.add(Dense(32, activation='relu', input_dim=x_train.shape[1]))
-model.add(Dense(16, activation='relu'))
-model.add(Dense(16, activation='relu'))
+model.add(Dense(64, activation='relu', input_dim=x_train.shape[1]))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu'))
 model.add(Dense(6, activation='softmax'))
 model.summary()
 

@@ -1,42 +1,34 @@
+# run: jupyter nbconvert --to python train_rotation_order.ipynb --template=python_script.tpl
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# ## Dependencies
+# * standard libraries: random, math, itertools
+# * numpy scipy
+# * keras / tensorflow
 import random
 import math
 from itertools import permutations
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-
-
-# In[2]:
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, BatchNormalization
 from keras.optimizers import SGD, Adam
 from keras.preprocessing.image import ImageDataGenerator
 
-
-# # Model
-
-# In[3]:
+# ## Model
 all_rotation_orders = [''.join(axes) for axes in permutations({'x','y','z'})]
 all_rotation_orders
-
-
-# In[4]:
 def random_vector(n, mag):
     return 2.0 * mag * (0.5-np.random.random(size=n))
 random_vector(10,5.0)
-
 
 # define a function to generate a single sample from the model.
 # 
 # sample is a tuple of:
 # * np.array with 9 matrix elements + 3 rotation angles
 # * string corresponding to chosen rotation order (element of all_rotation_orders)
-
-# In[8]:
 def generate_sample_from_model():
     rotation_order = random.choice(all_rotation_orders)  # choose a rotation order
     angles = random_vector(3, 10.0)   # generate three random angles (in degrees)
@@ -51,14 +43,11 @@ def generate_sample_from_model():
     return (x, rotation_order)
 generate_sample_from_model()
 
-
 # define a function to generate multiple samples, suitable for training or testing.
 # 
 # for number N, sample is a tuple:
 #  * np.array Nx12 of x vectors (standardized zero mean)
 #  * np.array Nx6 one-hot vectors
-
-# In[9]:
 def generate_samples(n):
     [xs, rotation_orders] = list(zip(*[generate_sample_from_model() for _ in range(n)]))
     xs = np.array(xs)
@@ -68,18 +57,12 @@ def generate_samples(n):
     return xs, keras.utils.to_categorical(ys)
 generate_samples(3)
 
-
 # generate training and testing data from the model
-
-# In[13]:
 x_train, y_train = generate_samples(10000)
 x_test, y_test = generate_samples(1000)
 x_train.shape, y_train.shape
 
-
 # now create an MLP as the model
-
-# In[14]:
 model = Sequential()
 model.add(Dense(64, activation='relu', input_dim = x_train.shape[1]))
 model.add(Dense(32, activation='relu'))
@@ -87,58 +70,21 @@ model.add(Dense(32, activation='relu'))
 model.add(Dense(6, activation='softmax'))
 model.summary()
 
-
 # set up the optimizer and compile the model
-
-# In[15]:
 adam = Adam(lr=0.001, decay=1e-8)
 model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
 
-
 # now fit the data using the training samples
-
-# In[16]:
 model.fit(x_train, y_train, epochs=200, batch_size=256)
-
-
-# In[17]:
 score = model.evaluate(x_test, y_test, batch_size=256)
 print(score)
-
-
-# In[18]:
 model.save('rotation_order.h5')
-
-
-# In[21]:
 import h5py
 f = h5py.File('rotation_order.h5')
-
-
-# In[22]:
 f
-
-
-# In[36]:
 [(k, grp) for k in f.keys() for grp in f[k]]
-
-
-# In[37]:
-
-
 type(f)
-
-
-# In[53]:
-
-
 import pprint
 f.visititems(lambda name, obj: pprint.pprint(obj))
 # f['model_weights']['dense_1'].name
-
-
-# In[ ]:
-
-
-
 

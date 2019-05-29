@@ -26,8 +26,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="generate_python.bat" />
+    <Content Include="model_config.json" />
+    <Content Include="notebook.bat" />
     <Content Include="python_script.tpl" />
     <Content Include="train_rotation_order.ipynb" />
+    <Content Include="weights.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

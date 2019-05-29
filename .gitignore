@@ -162,6 +162,9 @@ Desktop.ini
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
+# jupyter
+.ipynb_checkpoints/*
+
 # Mac crap
 .DS_Store
 docs/*.html
@@ -173,7 +176,7 @@ BuildTools/
 *.dotsettings
 
 # ====================================
-# equator stuff + unwanted extensions
+# stuff + unwanted extensions
 # ====================================
 BuildTools
 .dll

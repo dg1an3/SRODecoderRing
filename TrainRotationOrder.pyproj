@@ -25,6 +25,7 @@
     <Compile Include="train_rotation_order.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="generate_python.bat" />
     <Content Include="python_script.tpl" />
     <Content Include="train_rotation_order.ipynb" />
   </ItemGroup>

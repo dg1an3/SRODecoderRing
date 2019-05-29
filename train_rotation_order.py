@@ -16,13 +16,15 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, BatchNormalization
 from keras.optimizers import SGD, Adam
 from keras.preprocessing.image import ImageDataGenerator
+from keras import backend as K
+print(K.backend())
 
 # ## Model
 all_rotation_orders = [''.join(axes) for axes in permutations({'x','y','z'})]
-all_rotation_orders
+print(all_rotation_orders)
 def random_vector(n, mag):
     return 2.0 * mag * (0.5-np.random.random(size=n))
-random_vector(10,5.0)
+print(random_vector(10,5.0))
 
 # define a function to generate a single sample from the model.
 # 
@@ -41,26 +43,30 @@ def generate_sample_from_model():
                         # np.array(np.cos(noise_angles)), 
                         # np.array(np.sin(noise_angles))))                         
     return (x, rotation_order)
-generate_sample_from_model()
+print(generate_sample_from_model())
 
 # define a function to generate multiple samples, suitable for training or testing.
 # 
 # for number N, sample is a tuple:
 #  * np.array Nx12 of x vectors (standardized zero mean)
 #  * np.array Nx6 one-hot vectors
-def generate_samples(n):
+def generate_samples(n, mean=None, std=None):
     [xs, rotation_orders] = list(zip(*[generate_sample_from_model() for _ in range(n)]))
     xs = np.array(xs)
-    xs -= xs.mean(0)    # standardize along sample dimension
-    xs /= xs.std(0)
+    if mean is None:
+        mean = xs.mean(0)
+    if std is None:
+        std = xs.std(0)
+    xs -= mean    # standardize along sample dimension
+    xs /= std
     ys = [all_rotation_orders.index(rotation_order) for rotation_order in rotation_orders]
-    return xs, keras.utils.to_categorical(ys)
-generate_samples(3)
+    return xs, mean, std, keras.utils.to_categorical(ys)
+print(generate_samples(3))
 
 # generate training and testing data from the model
-x_train, y_train = generate_samples(10000)
-x_test, y_test = generate_samples(1000)
-x_train.shape, y_train.shape
+x_train, mean, std, y_train = generate_samples(10000)
+x_test, _, _, y_test = generate_samples(1000, mean, std)
+print(x_train.shape, y_train.shape)
 
 # now create an MLP as the model
 model = Sequential()
@@ -78,13 +84,31 @@ model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accurac
 model.fit(x_train, y_train, epochs=200, batch_size=256)
 score = model.evaluate(x_test, y_test, batch_size=256)
 print(score)
-model.save('rotation_order.h5')
-import h5py
-f = h5py.File('rotation_order.h5')
-f
-[(k, grp) for k in f.keys() for grp in f[k]]
-type(f)
-import pprint
-f.visititems(lambda name, obj: pprint.pprint(obj))
-# f['model_weights']['dense_1'].name
+import json
+import csv
+with open('model_config.json', 'w') as modelfile:  
+    json.dump(model.get_config(), modelfile)
+def rows_of(array):
+    if len(array.shape) > 1:
+        for n in range(array.shape[0]):
+            yield (n, array[n])
+    else:
+        yield (0, array)
+        
+with open('weights.csv', 'w', newline='') as csvfile:
+    weightswriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+    for layer in model.layers:
+        for weight_variable in layer.weights:
+            weight_values = K.batch_get_value(weight_variable)
+            for (row_num, row_array) in rows_of(weight_values):
+                if len(weight_values.shape) > 1:
+                    row_count = weight_values.shape[0]
+                    col_count = weight_values.shape[1]
+                else:
+                    row_count = 1
+                    col_count = weight_values.shape[0]                    
+                csv_row = [layer.name, weight_variable.name,
+                           row_count, col_count, row_num] + list(row_array)
+                weightswriter.writerow(csv_row)
+# !jupyter nbconvert --to python train_rotation_order.ipynb --template=python_script.tpl
 

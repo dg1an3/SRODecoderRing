@@ -27,10 +27,8 @@ namespace SRODecoderEngine
     
     public class LayerConfiguration
     {
-        [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("trainable")]
         public bool Trainable { get; set; }
 
         [JsonProperty("batch_input_shape")]

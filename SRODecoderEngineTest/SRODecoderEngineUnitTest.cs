@@ -14,5 +14,29 @@ namespace SRODecoderEngineTest
             var sequentialModel = JsonConvert.DeserializeObject<SequentialModel>(json);
             Assert.IsTrue(sequentialModel.Layers.Count == 4);
         }
+
+        [TestMethod]
+        public void TestLoadWeights()
+        {
+
+        }
+
+        [TestMethod]
+        public void TestActivationRelu()
+        {
+
+        }
+
+        [TestMethod]
+        public void TestActivationSoftmax()
+        {
+
+        }
+
+        [TestMethod]
+        public void TestDenseLayer()
+        {
+
+        }
     }
 }

@@ -1,7 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
+using System.Linq;
+using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace SRODecoderEngine
 {
@@ -56,9 +60,70 @@ namespace SRODecoderEngine
     public class SRODecoderEngine
     {
         // read in the model and the weights
-        public SRODecoderEngine(string json)
+        public SRODecoderEngine(Stream modelStream, Stream weightsStream)
         {
-            var sequentialModel = JsonConvert.DeserializeObject<SequentialModel>(json);
+            using (var modelReader = new StreamReader(modelStream, Encoding.UTF8))
+            {
+                var json = modelReader.ReadToEnd();
+                Model = JsonConvert.DeserializeObject<SequentialModel>(json);
+            }
+
+            if (weightsStream == null)
+                return;
+
+            using (var reader = new StreamReader(weightsStream, Encoding.UTF8))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    var values = line.Split(',');
+                    var layer_name = values[0];
+                    var currentLayer = 
+                        Model.Layers.FirstOrDefault(layer => layer.Configuration.Name == values[0]);
+                    Trace.Assert(currentLayer != null, string.Format("unable to find layer with name {0}", values[0]));
+
+                    var variable_desc = values[1].Split(new char[] { '/', ':' });
+                    Trace.Assert(variable_desc[0].CompareTo(layer_name) == 0);
+
+                    var tensor_height = Convert.ToInt32(values[2]);
+                    var tensor_width = Convert.ToInt32(values[3]);
+
+                    double[,] tensor = null;
+                    if (!currentLayer.Variables.TryGetValue(variable_desc[1], out tensor))
+                    {
+                        tensor = new double[tensor_height, tensor_width];
+                        currentLayer.Variables.Add(variable_desc[1], tensor);
+                    }
+
+                    var tensor_row = Convert.ToInt32(values[4]);
+                    Trace.Assert(tensor_row < tensor_height);
+
+                    if (variable_desc[1].CompareTo("kernel") == 0)
+                    {
+                        if (currentLayer.Configuration.BatchInputShape != null)
+                        {
+                            Trace.Assert(tensor_height == currentLayer.Configuration.BatchInputShape[1].Value);
+                        }
+                    }
+                    else if (variable_desc[1].CompareTo("bias") == 0)
+                    {
+                        Trace.Assert(tensor_height == 1);
+                    }
+                    else
+                    {
+                        Trace.Assert(false, "unrecognized layer variable");
+                    }
+
+                    Trace.Assert(tensor_width == currentLayer.Configuration.Units);
+                    Trace.Assert(values.Length - 5 == tensor_width);
+                    for (int n = 5; n < values.Length; n++)
+                    {
+                        tensor[tensor_row, n - 5] = Convert.ToDouble(values[n]);
+                    }
+                }
+            }
         }
+
+        public SequentialModel Model { get; set; }
     }
 }

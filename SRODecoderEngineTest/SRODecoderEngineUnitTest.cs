@@ -10,19 +10,9 @@ namespace SRODecoderEngineTest
         [TestMethod]
         public void TestDeserializeModel()
         {
-            var json = 
-                @"{ ""name"": ""sequential_1"",
-                    ""layers"": [ 
-                        { ""class_name"": ""Dense"", 
-                            ""config"": {
-                            ""name"": ""dense_1"", ""trainable"": true,
-                            ""batch_input_shape"": [ null, 12 ],
-                            ""dtype"": ""float32"",
-                            ""units"": 64,
-                            ""activation"": ""relu"",
-                            ""use_bias"": true } } ] }";
-
+            var json = SRODecoderEngineTest.Properties.Resources.ModelTestJson;
             var sequentialModel = JsonConvert.DeserializeObject<SequentialModel>(json);
+            Assert.IsTrue(sequentialModel.Layers.Count == 4);
         }
     }
 }

@@ -22,6 +22,10 @@ namespace SRODecoderEngineTest
                 var sequentialModel = JsonConvert.DeserializeObject<SequentialModel>(json);
                 Assert.IsTrue(sequentialModel.Layers.Count == 2);
 
+                // test that they are dense layers
+                Assert.IsTrue(sequentialModel.Layers
+                    .All(layer => layer.ClassName == "Dense"));
+
                 // test that first has batch input shape
                 Assert.IsTrue(sequentialModel.Layers
                     .First().Configuration.BatchInputShape != null);

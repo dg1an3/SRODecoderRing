@@ -13,19 +13,27 @@ namespace SRODecoderEngineTest
         [TestMethod]
         public void TestDeserializeModel()
         {
-            var stream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.model_config.json");
+            var stream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.test_model_config.json");
             using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
                 var json = reader.ReadToEnd();
                 var sequentialModel = JsonConvert.DeserializeObject<SequentialModel>(json);
-                Assert.IsTrue(sequentialModel.Layers.Count == 4);
+                Assert.IsTrue(sequentialModel.Layers.Count == 1);
             }
         }
 
         [TestMethod]
         public void TestLoadWeights()
         {
-
+            var stream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.test_model_weights.csv");
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    var values = line.Split(',');
+                }
+            }
         }
 
         [TestMethod]

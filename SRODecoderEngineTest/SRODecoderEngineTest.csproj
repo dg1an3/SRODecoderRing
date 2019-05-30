@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\TrainRotationOrder\model_config.json" Link="model_config.json" />
+    <EmbeddedResource Include="..\TrainRotationOrder\test_model_config.json" Link="test_model_config.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +27,10 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\TrainRotationOrder\test_model_weights.csv" Link="test_model_weights.csv" />
   </ItemGroup>
 
 </Project>

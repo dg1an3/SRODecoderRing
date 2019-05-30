@@ -29,6 +29,9 @@
     <Content Include="model_config.json" />
     <Content Include="notebook.bat" />
     <Content Include="python_script.tpl" />
+    <Content Include="test_linear.ipynb" />
+    <Content Include="test_model_config.json" />
+    <Content Include="test_model_weights.csv" />
     <Content Include="train_rotation_order.ipynb" />
     <Content Include="weights.csv" />
   </ItemGroup>

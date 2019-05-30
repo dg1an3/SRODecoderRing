@@ -30,10 +30,17 @@
     <Content Include="notebook.bat" />
     <Content Include="python_script.tpl" />
     <Content Include="test_linear.ipynb" />
-    <Content Include="test_model_config.json" />
-    <Content Include="test_model_weights.csv" />
+    <Content Include="test_linear_model\config.json" />
+    <Content Include="test_linear_model\predict_posttrain.csv" />
+    <Content Include="test_linear_model\predict_pretrain.csv" />
+    <Content Include="test_linear_model\weights_posttrain.csv" />
+    <Content Include="test_linear_model\weights_pretrain.csv" />
     <Content Include="train_rotation_order.ipynb" />
     <Content Include="weights.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="sro_decoder_model\" />
+    <Folder Include="test_linear_model\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

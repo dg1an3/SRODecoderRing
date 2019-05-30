@@ -34,7 +34,7 @@ namespace SRODecoderEngine
         public bool Trainable { get; set; }
 
         [JsonProperty("batch_input_shape")]
-        public int[] BatchInputShape { get; set; }
+        public int?[] BatchInputShape { get; set; }
 
         [JsonProperty("dtype")]
         public string DType { get; set; }

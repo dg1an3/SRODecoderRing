@@ -22,7 +22,7 @@ namespace SRODecoderEngine
         [JsonProperty("config")]
         public LayerConfiguration Configuration { get; set; }
 
-        public IDictionary<string, object> Variables { get; set; }
+        public IDictionary<string, double[,]> Variables { get; set; } = new Dictionary<string, double[,]>();
     }
     
     public class LayerConfiguration

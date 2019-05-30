@@ -15,7 +15,7 @@ namespace SRODecoderEngineTest
         [TestMethod]
         public void TestDeserializeModel()
         {
-            var stream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.test_model_config.json");
+            var stream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.config.json");
             using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
                 var json = reader.ReadToEnd();
@@ -50,14 +50,14 @@ namespace SRODecoderEngineTest
         public void TestLoadWeights()
         {
             SequentialModel sequentialModel = null;
-            var modelStream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.test_model_config.json");
+            var modelStream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.config.json");
             using (var modelReader = new StreamReader(modelStream, Encoding.UTF8))
             {
                 var json = modelReader.ReadToEnd();
                 sequentialModel = JsonConvert.DeserializeObject<SequentialModel>(json);
             }
 
-            var stream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.test_model_weights.csv");
+            var stream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.weights_posttrain.csv");
             using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
                 while (!reader.EndOfStream)
@@ -65,12 +65,20 @@ namespace SRODecoderEngineTest
                     var line = reader.ReadLine();
                     var values = line.Split(',');
                     var layer_name = values[0];
-                    var currentLayer = sequentialModel.Layers.First(layer => layer.Configuration.Name == values[0]);
+                    var currentLayer = sequentialModel.Layers.First(layer => layer.Configuration.Name == values[0]);                    
                     var variable_desc = values[1].Split(new char[] { '/', ':' });
                     Assert.IsTrue(variable_desc[0].CompareTo(layer_name) == 0);
 
                     var tensor_height = Convert.ToInt32(values[2]);
                     var tensor_width = Convert.ToInt32(values[3]);
+
+                    double[,] tensor = null;
+                    if (!currentLayer.Variables.TryGetValue(variable_desc[1], out tensor))
+                    {
+                        tensor = new double[tensor_height, tensor_width];
+                        currentLayer.Variables.Add(variable_desc[1], tensor);
+                    }
+
                     var tensor_row = Convert.ToInt32(values[4]);
                     Assert.IsTrue(tensor_row < tensor_height);
 
@@ -91,8 +99,18 @@ namespace SRODecoderEngineTest
                     }
                     Assert.IsTrue(tensor_width == currentLayer.Configuration.Units);
                     Assert.IsTrue(values.Length - 5 == tensor_width);
+                    for (int n = 5; n < values.Length; n++)
+                    {
+                        tensor[tensor_row, n - 5] = Convert.ToDouble(values[n]);
+                    }
                 }
             }
+        }
+
+        [TestMethod]
+        public void TestDenseLayer()
+        {
+            var engine = new SRODecoderEngine.SRODecoderEngine("");
         }
 
         [TestMethod]
@@ -103,12 +121,6 @@ namespace SRODecoderEngineTest
 
         [TestMethod]
         public void TestActivationSoftmax()
-        {
-
-        }
-
-        [TestMethod]
-        public void TestDenseLayer()
         {
 
         }

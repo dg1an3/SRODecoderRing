@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\TrainRotationOrder\test_linear_model\config.json" Link="config.json" />
+    <EmbeddedResource Include="..\TrainRotationOrder\test_linear_model\config.json" Link="config.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,10 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\TrainRotationOrder\test_linear_model\predict_posttrain.csv" Link="predict_posttrain.csv" />
-    <None Include="..\TrainRotationOrder\test_linear_model\predict_pretrain.csv" Link="predict_pretrain.csv" />
-    <None Include="..\TrainRotationOrder\test_linear_model\weights_posttrain.csv" Link="weights_posttrain.csv" />
-    <None Include="..\TrainRotationOrder\test_linear_model\weights_pretrain.csv" Link="weights_pretrain.csv" />
+    <EmbeddedResource Include="..\TrainRotationOrder\test_linear_model\predict_posttrain.csv" Link="predict_posttrain.csv" />
+    <EmbeddedResource Include="..\TrainRotationOrder\test_linear_model\predict_pretrain.csv" Link="predict_pretrain.csv" />
+    <EmbeddedResource Include="..\TrainRotationOrder\test_linear_model\weights_posttrain.csv" Link="weights_posttrain.csv" />
+    <EmbeddedResource Include="..\TrainRotationOrder\test_linear_model\weights_pretrain.csv" Link="weights_pretrain.csv" />
   </ItemGroup>
 
 </Project>

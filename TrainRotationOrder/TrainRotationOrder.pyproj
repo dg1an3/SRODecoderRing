@@ -29,7 +29,7 @@
     <Content Include="model_config.json" />
     <Content Include="notebook.bat" />
     <Content Include="python_script.tpl" />
-    <Content Include="test_linear.ipynb" />
+    <Content Include="test_linear_model.ipynb" />
     <Content Include="test_linear_model\config.json" />
     <Content Include="test_linear_model\predict_posttrain.csv" />
     <Content Include="test_linear_model\predict_pretrain.csv" />

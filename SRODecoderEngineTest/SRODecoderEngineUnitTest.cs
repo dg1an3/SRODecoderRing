@@ -41,6 +41,7 @@ namespace SRODecoderEngineTest
 
             // test for activation values
             Assert.IsTrue(engine.Model.Layers.All(layer => layer.Configuration.Activation != null));
+            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Configuration.Activation.CompareTo("linear") == 0));
         }
 
         [TestMethod]

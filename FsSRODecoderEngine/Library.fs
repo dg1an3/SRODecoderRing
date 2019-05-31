@@ -8,7 +8,7 @@ module FsSRODecoderEngine =
     open Newtonsoft.Json
     open SRODecoderEngine
 
-    let readTensorFromLines (lines:seq<string>) =
+    let readTensorsFromLines (lines:seq<string>) =
         let extractWidthHeightFromLines (rowLines) =
             rowLines
             |> Seq.map (List.take 2 >> List.map int) 
@@ -33,29 +33,49 @@ module FsSRODecoderEngine =
             (fun (label, rowLines) -> 
                 let [width; height] = extractWidthHeightFromLines rowLines
                 let matrixRows = extractMatrixRowsFromLines rowLines
-                let tensor = 
-                    Array2D.init width height 
-                        (fun x y -> matrixRows.[x].[y])
-                printfn "%A" tensor
+                let tensor = Array2D.init width height (fun x y -> matrixRows.[x].[y])
                 (label, tensor))
         |> Map.ofSeq
-
-    let testReader () =
-        seq { 
-            yield "kernel,2,3,0,0,0,0";
-            yield "kernel,2,3,1,0,0,0"
-            yield "bias,1,3,0,0,0,0";
-        }
-        |> readTensorFromLines
-
-    let readModel(modelStream:Stream) =
+        
+    let readModelAndWeights (modelStream:Stream) (weightStream:Stream) =
         use modelReader = new StreamReader(modelStream, Encoding.UTF8)
-        modelReader.ReadToEnd()
-        |> JsonConvert.DeserializeObject<SequentialModel>
-
-    let readWeights(weightStream:Stream) =
+        let model = 
+            modelReader.ReadToEnd()
+            |> JsonConvert.DeserializeObject<SequentialModel>
         use weightsReader = new StreamReader(weightStream, Encoding.UTF8)
         seq { while not weightsReader.EndOfStream 
                 do yield weightsReader.ReadLine() }
-        |> readTensorFromLines
+        |> readTensorsFromLines
+        |> Map.iter
+            (fun label tensor -> 
+                let [layerName; variableName] = label.Split('/') |> List.ofArray
+                let layer = 
+                    model.Layers 
+                    |> Seq.find (fun layer -> layer.Configuration.Name.CompareTo(layerName) = 0)
+                layer.Variables.Add(variableName, tensor))
+        model
 
+    let predictForKernelBias (input:float[,]) (kernelTensor:float[,]) (biasTensor:float[,]) = 
+        let batchCount = input.GetLength(0)
+        Array2D.init batchCount (kernelTensor.GetLength(1))
+            (fun atBatch m ->
+                seq { 0..kernelTensor.GetLength(0) }                            
+                |> Seq.fold 
+                    (fun sum n -> 
+                        sum + input.[atBatch,n] * kernelTensor.[n,m]) 0.0
+                |> (+) (biasTensor.[0,m]))
+
+    let predictForLayer (input:float[,]) (layer:Layer)  =
+        let kernelTensor = layer.Variables.["kernel"]
+        let biasTensor = layer.Variables.["bias"]
+        let activation = 
+            match layer.Configuration.Activation with 
+            | "linear" -> id
+            | "relu" -> (fun x -> if x < 0.0 then 0.0 else x)
+            | _ -> raise(Exception())
+        predictForKernelBias kernelTensor biasTensor input
+        |> Array2D.map activation
+
+    let predict (model:SequentialModel) (input:float[,]) =
+        model.Layers 
+        |> Seq.fold predictForLayer input

@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="Dense.fs" />
+    <Compile Include="Conv2d.fs" />
+    <Compile Include="Model.fs" />
   </ItemGroup>
 
   <ItemGroup>

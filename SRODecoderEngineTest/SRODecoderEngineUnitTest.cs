@@ -54,22 +54,17 @@ namespace SRODecoderEngineTest
             for (int nLayer = 0; nLayer < engine.Model.Layers.Count; nLayer++)
             {
                 Layer currentLayer = engine.Model.Layers[nLayer];
-                double[,] kernelTensor = 
-                    currentLayer.Variables
-                        .Where(kvp => kvp.Key.Contains("kernel"))
-                        .Select(kvp => kvp.Value).FirstOrDefault();
+                double[,] kernelTensor = currentLayer.Variables["kernel"];
                 if (currentLayer.Configuration.UseBias)
                 {
-                    Assert.IsTrue(currentLayer.Variables.Any(kvp => kvp.Key.Contains("bias")));
-                    double[,] biasTensor = 
-                        currentLayer.Variables
-                            .Where(kvp => kvp.Key.Contains("bias"))
-                            .Select(kvp => kvp.Value).FirstOrDefault();
+                    Assert.IsTrue(currentLayer.Variables.ContainsKey("bias"));
+                    double[,] biasTensor = currentLayer.Variables["bias"];
+                    Assert.AreEqual(biasTensor.GetLength(0), 1);
                     Assert.AreEqual(biasTensor.GetLength(1), kernelTensor.GetLength(1));
                 }
                 else
                 {
-                    Assert.IsFalse(currentLayer.Variables.Any(kvp => kvp.Key.Contains("bias")));
+                    Assert.IsFalse(currentLayer.Variables.ContainsKey("bias"));
                 }
 
                 Assert.AreEqual(currentLayer.Configuration.Units,
@@ -79,10 +74,7 @@ namespace SRODecoderEngineTest
                 {
                     Assert.IsTrue(currentLayer.Configuration.BatchInputShape == null);
                     Layer previousLayer = engine.Model.Layers[nLayer - 1];
-                    double[,] previousKernelTensor = 
-                        previousLayer.Variables
-                            .Where(kvp => kvp.Key.Contains("kernel"))
-                            .Select(kvp => kvp.Value).FirstOrDefault();
+                    double[,] previousKernelTensor = previousLayer.Variables["kernel"];
                     Assert.AreEqual(previousKernelTensor.GetLength(1), 
                         kernelTensor.GetLength(0));
                 }                

@@ -71,47 +71,33 @@ namespace SRODecoderEngine
             if (weightsStream == null)
                 return;
 
-            Func<string[], string> computeModelKey =
-                values =>
-                {
-                    var layer_name = values[0];
-                    var variable_desc = values[1].Split(new char[] { '/', ':' });
-                    Trace.Assert(variable_desc[0].CompareTo(layer_name) == 0);
-                    return values[1];
-                };
+            Func<string[], string> computeModelKey = values => values[1];
 
             var tensorsDictionary = ReadTensorsCsv(weightsStream, 2, computeModelKey);
             foreach (var kvp in tensorsDictionary)
             {
-                var variable_desc = kvp.Key.Split(new char[] { '/', ':' });
                 var currentLayer = 
                     Model.Layers
-                        .FirstOrDefault(layer => layer.Configuration.Name.CompareTo(variable_desc[0]) == 0);
+                        .FirstOrDefault(layer => 
+                            layer.Configuration.Name.CompareTo(LayerFromVariableLabel(kvp.Key)) == 0);
                 Trace.Assert(currentLayer != null, string.Format("unable to find layer with name {0}", kvp.Key[0]));
-                currentLayer.Variables.Add(kvp.Key, kvp.Value);
 
-                // TODO: should these be in unit tests?
-                if (variable_desc[1].CompareTo("kernel") == 0)
-                {
-                    if (currentLayer.Configuration.BatchInputShape != null)
-                    {
-                        Trace.Assert(kvp.Value.GetLength(0) == currentLayer.Configuration.BatchInputShape[1].Value);
-                    }
-                }
-                else if (variable_desc[1].CompareTo("bias") == 0)
-                {
-                    Trace.Assert(kvp.Value.GetLength(0) == 1);
-                }
-                else
-                {
-                    Trace.Assert(false, "unrecognized layer variable");
-                }
-
-                Trace.Assert(kvp.Value.GetLength(1) == currentLayer.Configuration.Units);
+                var name = NameFromVariableLabel(kvp.Key);
+                currentLayer.Variables.Add(name, kvp.Value);
             }
         }
 
+        public static string LayerFromVariableLabel(string label)
+        {
+            var variable_desc = label.Split(new char[] { '/', ':' });
+            return variable_desc[0];
+        }
 
+        public static string NameFromVariableLabel(string label)
+        {
+            var variable_desc = label.Split(new char[] { '/', ':' });
+            return variable_desc[1];
+        }
 
         public static IDictionary<string, double[,]> ReadTensorsCsv(Stream stream, int precolumns, Func<string[], string> funcKey)
         {

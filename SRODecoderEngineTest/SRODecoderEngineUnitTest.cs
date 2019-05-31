@@ -90,7 +90,11 @@ namespace SRODecoderEngineTest
         [TestMethod]
         public void TestDenseLayer()
         {
-            var engine = new SRODecoderEngine.SRODecoderEngine(null, null);
+            var modelStream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.config.json");
+            var weightStream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.weights_posttrain.csv");
+            var engine = new SRODecoderEngine.SRODecoderEngine(modelStream, weightStream);
+
+            var output = engine.Predict(new double[,] { { 0.0, 0.0, 0.0 }, { 1.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0 }, { 0.0, 0.0, 1.0 } });
         }
 
         [TestMethod]

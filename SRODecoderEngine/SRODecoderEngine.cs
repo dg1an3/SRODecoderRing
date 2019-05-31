@@ -71,34 +71,20 @@ namespace SRODecoderEngine
             if (weightsStream == null)
                 return;
 
-            Func<string[], string> computeModelKey = values => values[1];
-
-            var tensorsDictionary = ReadTensorsCsv(weightsStream, 2, computeModelKey);
+            var tensorsDictionary = ReadTensorsCsv(weightsStream, 2, values => values[1]);
             foreach (var kvp in tensorsDictionary)
             {
+                var layerName = LayerFromVariableLabel(kvp.Key);
                 var currentLayer = 
                     Model.Layers
                         .FirstOrDefault(layer => 
-                            layer.Configuration.Name.CompareTo(LayerFromVariableLabel(kvp.Key)) == 0);
-                Trace.Assert(currentLayer != null, string.Format("unable to find layer with name {0}", kvp.Key[0]));
+                            layer.Configuration.Name.CompareTo(layerName) == 0);
+                Trace.Assert(currentLayer != null, string.Format("unable to find layer with name {0}", layerName));
 
                 var name = NameFromVariableLabel(kvp.Key);
                 currentLayer.Variables.Add(name, kvp.Value);
             }
         }
-
-        public static string LayerFromVariableLabel(string label)
-        {
-            var variable_desc = label.Split(new char[] { '/', ':' });
-            return variable_desc[0];
-        }
-
-        public static string NameFromVariableLabel(string label)
-        {
-            var variable_desc = label.Split(new char[] { '/', ':' });
-            return variable_desc[1];
-        }
-
         public static IDictionary<string, double[,]> ReadTensorsCsv(Stream stream, int precolumns, Func<string[], string> funcKey)
         {
             var dict = new Dictionary<string, double[,]>();
@@ -131,6 +117,40 @@ namespace SRODecoderEngine
             return dict;
         }
 
+        public static string LayerFromVariableLabel(string label)
+        {
+            var variable_desc = label.Split(new char[] { '/', ':' });
+            return variable_desc[0];
+        }
+
+        public static string NameFromVariableLabel(string label)
+        {
+            var variable_desc = label.Split(new char[] { '/', ':' });
+            return variable_desc[1];
+        }
+
         public SequentialModel Model { get; set; }
+
+        public double[,] Predict(double[,] input)
+        {
+            var batchSize = Model.Layers[0].Configuration.BatchInputShape[1].Value;
+            Trace.Assert(input.GetLength(0) == batchSize);
+
+            var kernelTensor = Model.Layers[0].Variables["kernel"];
+            var biasTensor = Model.Layers[0].Variables["bias"];
+            var result = new double[batchSize, kernelTensor.GetLength(1)];
+            for (int atBatch = 0; atBatch < batchSize; atBatch++)
+            {
+                Trace.Assert(kernelTensor.GetLength(0) == input.GetLength(1));
+                for (int n = 0; n < kernelTensor.GetLength(0); n++)
+                {
+                    for (int m = 0; m < kernelTensor.GetLength(1); m++)
+                    {
+                        result[atBatch, n] += input[atBatch, n] * kernelTensor[n, m];
+                    }
+                }                
+            }
+            return result;
+        }
     }
 }

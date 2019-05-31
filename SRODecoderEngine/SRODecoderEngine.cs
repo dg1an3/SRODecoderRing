@@ -133,24 +133,55 @@ namespace SRODecoderEngine
 
         public double[,] Predict(double[,] input)
         {
-            var batchSize = Model.Layers[0].Configuration.BatchInputShape[1].Value;
-            Trace.Assert(input.GetLength(0) == batchSize);
+            var inSize = Model.Layers[0].Configuration.BatchInputShape[1].Value;
+            Trace.Assert(input.GetLength(1) == inSize);
 
-            var kernelTensor = Model.Layers[0].Variables["kernel"];
-            var biasTensor = Model.Layers[0].Variables["bias"];
-            var result = new double[batchSize, kernelTensor.GetLength(1)];
-            for (int atBatch = 0; atBatch < batchSize; atBatch++)
+            var kernelTensor0 = Model.Layers[0].Variables["kernel"];
+            var biasTensor0 = Model.Layers[0].Variables["bias"];
+            Trace.Assert(input.GetLength(1) == kernelTensor0.GetLength(0));
+
+            var batchCount = input.GetLength(0);
+            var result0 = new double[batchCount, kernelTensor0.GetLength(1)];
+            Trace.Assert(result0.GetLength(1) == biasTensor0.GetLength(1));
+            for (int atBatch0 = 0; atBatch0 < batchCount; atBatch0++)
             {
-                Trace.Assert(kernelTensor.GetLength(0) == input.GetLength(1));
-                for (int n = 0; n < kernelTensor.GetLength(0); n++)
+                for (int m = 0; m < biasTensor0.GetLength(1); m++)
                 {
-                    for (int m = 0; m < kernelTensor.GetLength(1); m++)
+                    result0[atBatch0, m] = biasTensor0[0, m];
+                }
+
+                for (int n = 0; n < kernelTensor0.GetLength(0); n++)
+                {
+                    for (int m = 0; m < kernelTensor0.GetLength(1); m++)
                     {
-                        result[atBatch, n] += input[atBatch, n] * kernelTensor[n, m];
+                        result0[atBatch0, m] += input[atBatch0, n] * kernelTensor0[n, m];
                     }
-                }                
+                }
             }
-            return result;
+
+            var kernelTensor1 = Model.Layers[1].Variables["kernel"];
+            Trace.Assert(kernelTensor1.GetLength(0) == result0.GetLength(1));
+
+            var biasTensor1 = Model.Layers[1].Variables["bias"];
+            var result1 = new double[batchCount, kernelTensor1.GetLength(1)];
+            Trace.Assert(result1.GetLength(1) == biasTensor1.GetLength(1));
+            for (int atBatch1 = 0; atBatch1 < batchCount; atBatch1++)
+            {
+                for (int m = 0; m < biasTensor1.GetLength(1); m++)
+                {
+                    result1[atBatch1, m] = biasTensor1[0, m];
+                }
+
+                for (int n = 0; n < kernelTensor1.GetLength(0); n++)
+                {
+                    for (int m = 0; m < kernelTensor1.GetLength(1); m++)
+                    {
+                        result1[atBatch1, m] += result0[atBatch1, n] * kernelTensor1[n, m];
+                    }
+                }
+            }
+
+            return result1;
         }
     }
 }

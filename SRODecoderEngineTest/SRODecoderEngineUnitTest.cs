@@ -94,7 +94,22 @@ namespace SRODecoderEngineTest
             var weightStream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.weights_posttrain.csv");
             var engine = new SRODecoderEngine.SRODecoderEngine(modelStream, weightStream);
 
-            var output = engine.Predict(new double[,] { { 0.0, 0.0, 0.0 }, { 1.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0 }, { 0.0, 0.0, 1.0 } });
+            var predictStream = GetType().Assembly.GetManifestResourceStream("SRODecoderEngineTest.predict_posttrain.csv");
+            var predictions = SRODecoderEngine.SRODecoderEngine.ReadTensorsCsv(predictStream, 1, values => values[0]);
+            var predictionInTensor = predictions["in"];
+            var predictionOutTensor = predictions["out"];
+
+            var actualOutput = engine.Predict(predictionInTensor);
+
+            Assert.AreEqual(actualOutput.GetLength(0), predictionOutTensor.GetLength(0));
+            Assert.AreEqual(actualOutput.GetLength(1), predictionOutTensor.GetLength(1));
+            for (int n = 0; n < actualOutput.GetLength(0); n++)
+            {
+                for (int m = 0; m < actualOutput.GetLength(1); m++)
+                {
+                    Assert.IsTrue(Math.Abs(actualOutput[n,m] - predictionOutTensor[n,m]) < 1e-3);
+                }
+            }
         }
 
         [TestMethod]

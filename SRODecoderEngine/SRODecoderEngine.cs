@@ -71,57 +71,78 @@ namespace SRODecoderEngine
             if (weightsStream == null)
                 return;
 
-            using (var reader = new StreamReader(weightsStream, Encoding.UTF8))
+            Func<string[], string> computeModelKey =
+                values =>
+                {
+                    var layer_name = values[0];
+                    var variable_desc = values[1].Split(new char[] { '/', ':' });
+                    Trace.Assert(variable_desc[0].CompareTo(layer_name) == 0);
+                    return values[1];
+                };
+
+            var tensorsDictionary = ReadTensorsCsv(weightsStream, 2, computeModelKey);
+            foreach (var kvp in tensorsDictionary)
+            {
+                var variable_desc = kvp.Key.Split(new char[] { '/', ':' });
+                var currentLayer = 
+                    Model.Layers
+                        .FirstOrDefault(layer => layer.Configuration.Name.CompareTo(variable_desc[0]) == 0);
+                Trace.Assert(currentLayer != null, string.Format("unable to find layer with name {0}", kvp.Key[0]));
+                currentLayer.Variables.Add(kvp.Key, kvp.Value);
+
+                // TODO: should these be in unit tests?
+                if (variable_desc[1].CompareTo("kernel") == 0)
+                {
+                    if (currentLayer.Configuration.BatchInputShape != null)
+                    {
+                        Trace.Assert(kvp.Value.GetLength(0) == currentLayer.Configuration.BatchInputShape[1].Value);
+                    }
+                }
+                else if (variable_desc[1].CompareTo("bias") == 0)
+                {
+                    Trace.Assert(kvp.Value.GetLength(0) == 1);
+                }
+                else
+                {
+                    Trace.Assert(false, "unrecognized layer variable");
+                }
+
+                Trace.Assert(kvp.Value.GetLength(1) == currentLayer.Configuration.Units);
+            }
+        }
+
+
+
+        public static IDictionary<string, double[,]> ReadTensorsCsv(Stream stream, int precolumns, Func<string[], string> funcKey)
+        {
+            var dict = new Dictionary<string, double[,]>();
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
                     var values = line.Split(',');
-                    var layer_name = values[0];
-                    var currentLayer = 
-                        Model.Layers.FirstOrDefault(layer => layer.Configuration.Name == values[0]);
-                    Trace.Assert(currentLayer != null, string.Format("unable to find layer with name {0}", values[0]));
+                    var key = funcKey(values);
 
-                    var variable_desc = values[1].Split(new char[] { '/', ':' });
-                    Trace.Assert(variable_desc[0].CompareTo(layer_name) == 0);
-
-                    var tensor_height = Convert.ToInt32(values[2]);
-                    var tensor_width = Convert.ToInt32(values[3]);
-
+                    var tensor_height = Convert.ToInt32(values[precolumns]);
+                    var tensor_width = Convert.ToInt32(values[precolumns+1]);
                     double[,] tensor = null;
-                    if (!currentLayer.Variables.TryGetValue(variable_desc[1], out tensor))
+                    if (!dict.TryGetValue(key, out tensor))
                     {
                         tensor = new double[tensor_height, tensor_width];
-                        currentLayer.Variables.Add(variable_desc[1], tensor);
+                        dict.Add(key, tensor);
                     }
 
-                    var tensor_row = Convert.ToInt32(values[4]);
+                    var tensor_row = Convert.ToInt32(values[precolumns+2]);
                     Trace.Assert(tensor_row < tensor_height);
-
-                    if (variable_desc[1].CompareTo("kernel") == 0)
+                    Trace.Assert(values.Length - (precolumns + 3) == tensor_width);
+                    for (int n = (precolumns + 3); n < values.Length; n++)
                     {
-                        if (currentLayer.Configuration.BatchInputShape != null)
-                        {
-                            Trace.Assert(tensor_height == currentLayer.Configuration.BatchInputShape[1].Value);
-                        }
-                    }
-                    else if (variable_desc[1].CompareTo("bias") == 0)
-                    {
-                        Trace.Assert(tensor_height == 1);
-                    }
-                    else
-                    {
-                        Trace.Assert(false, "unrecognized layer variable");
-                    }
-
-                    Trace.Assert(tensor_width == currentLayer.Configuration.Units);
-                    Trace.Assert(values.Length - 5 == tensor_width);
-                    for (int n = 5; n < values.Length; n++)
-                    {
-                        tensor[tensor_row, n - 5] = Convert.ToDouble(values[n]);
+                        tensor[tensor_row, n - (precolumns + 3)] = Convert.ToDouble(values[n]);
                     }
                 }
             }
+            return dict;
         }
 
         public SequentialModel Model { get; set; }

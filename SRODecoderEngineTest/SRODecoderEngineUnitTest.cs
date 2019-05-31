@@ -54,16 +54,22 @@ namespace SRODecoderEngineTest
             for (int nLayer = 0; nLayer < engine.Model.Layers.Count; nLayer++)
             {
                 Layer currentLayer = engine.Model.Layers[nLayer];
-                double[,] kernelTensor = currentLayer.Variables["kernel"];
+                double[,] kernelTensor = 
+                    currentLayer.Variables
+                        .Where(kvp => kvp.Key.Contains("kernel"))
+                        .Select(kvp => kvp.Value).FirstOrDefault();
                 if (currentLayer.Configuration.UseBias)
                 {
-                    Assert.IsTrue(currentLayer.Variables.ContainsKey("bias"));
-                    double[,] biasTensor = currentLayer.Variables["bias"];
+                    Assert.IsTrue(currentLayer.Variables.Any(kvp => kvp.Key.Contains("bias")));
+                    double[,] biasTensor = 
+                        currentLayer.Variables
+                            .Where(kvp => kvp.Key.Contains("bias"))
+                            .Select(kvp => kvp.Value).FirstOrDefault();
                     Assert.AreEqual(biasTensor.GetLength(1), kernelTensor.GetLength(1));
                 }
                 else
                 {
-                    Assert.IsTrue(!currentLayer.Variables.ContainsKey("bias"));
+                    Assert.IsFalse(currentLayer.Variables.Any(kvp => kvp.Key.Contains("bias")));
                 }
 
                 Assert.AreEqual(currentLayer.Configuration.Units,
@@ -73,7 +79,10 @@ namespace SRODecoderEngineTest
                 {
                     Assert.IsTrue(currentLayer.Configuration.BatchInputShape == null);
                     Layer previousLayer = engine.Model.Layers[nLayer - 1];
-                    double[,] previousKernelTensor = previousLayer.Variables["kernel"];
+                    double[,] previousKernelTensor = 
+                        previousLayer.Variables
+                            .Where(kvp => kvp.Key.Contains("kernel"))
+                            .Select(kvp => kvp.Value).FirstOrDefault();
                     Assert.AreEqual(previousKernelTensor.GetLength(1), 
                         kernelTensor.GetLength(0));
                 }                
@@ -84,54 +93,6 @@ namespace SRODecoderEngineTest
                         kernelTensor.GetLength(0));
                 }
             }
-
-            //using (var reader = new StreamReader(stream, Encoding.UTF8))
-            //{
-            //    while (!reader.EndOfStream)
-            //    {
-            //        var line = reader.ReadLine();
-            //        var values = line.Split(',');
-            //        var layer_name = values[0];
-            //        var currentLayer = sequentialModel.Layers.First(layer => layer.Configuration.Name == values[0]);                    
-            //        var variable_desc = values[1].Split(new char[] { '/', ':' });
-            //        Assert.IsTrue(variable_desc[0].CompareTo(layer_name) == 0);
-
-            //        var tensor_height = Convert.ToInt32(values[2]);
-            //        var tensor_width = Convert.ToInt32(values[3]);
-
-            //        double[,] tensor = null;
-            //        if (!currentLayer.Variables.TryGetValue(variable_desc[1], out tensor))
-            //        {
-            //            tensor = new double[tensor_height, tensor_width];
-            //            currentLayer.Variables.Add(variable_desc[1], tensor);
-            //        }
-
-            //        var tensor_row = Convert.ToInt32(values[4]);
-            //        Assert.IsTrue(tensor_row < tensor_height);
-
-            //        if (variable_desc[1].CompareTo("kernel") == 0)
-            //        {
-            //            if (currentLayer.Configuration.BatchInputShape != null)
-            //            {
-            //                Assert.IsTrue(tensor_height == currentLayer.Configuration.BatchInputShape[1].Value);
-            //            }
-            //        }
-            //        else if (variable_desc[1].CompareTo("bias") == 0)
-            //        {
-            //            Assert.IsTrue(tensor_height == 1);
-            //        }
-            //        else
-            //        {
-            //            Assert.Fail("unrecognized layer variable");
-            //        }
-            //        Assert.IsTrue(tensor_width == currentLayer.Configuration.Units);
-            //        Assert.IsTrue(values.Length - 5 == tensor_width);
-            //        for (int n = 5; n < values.Length; n++)
-            //        {
-            //            tensor[tensor_row, n - 5] = Convert.ToDouble(values[n]);
-            //        }
-            //    }
-            // }
         }
 
         [TestMethod]

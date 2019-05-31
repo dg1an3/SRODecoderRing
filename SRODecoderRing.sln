@@ -7,7 +7,9 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "TrainRotationOrder", "Train
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRODecoderEngine", "SRODecoderEngine\SRODecoderEngine.csproj", "{9D104135-69E3-452F-A1E4-F7E0032BA68B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRODecoderEngineTest", "SRODecoderEngineTest\SRODecoderEngineTest.csproj", "{573E6AD3-0F0A-4CA8-B75E-CC185082C74B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRODecoderEngineTest", "SRODecoderEngineTest\SRODecoderEngineTest.csproj", "{573E6AD3-0F0A-4CA8-B75E-CC185082C74B}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsSRODecoderEngine", "FsSRODecoderEngine\FsSRODecoderEngine.fsproj", "{579B6034-ED86-404B-819E-F2BAAB11D9F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,10 @@ Global
 		{573E6AD3-0F0A-4CA8-B75E-CC185082C74B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{573E6AD3-0F0A-4CA8-B75E-CC185082C74B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{573E6AD3-0F0A-4CA8-B75E-CC185082C74B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{579B6034-ED86-404B-819E-F2BAAB11D9F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{579B6034-ED86-404B-819E-F2BAAB11D9F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{579B6034-ED86-404B-819E-F2BAAB11D9F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{579B6034-ED86-404B-819E-F2BAAB11D9F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

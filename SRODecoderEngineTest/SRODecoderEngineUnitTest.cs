@@ -39,9 +39,11 @@ namespace SRODecoderEngineTest
             // test if they are trainable
             Assert.IsTrue(engine.Model.Layers.All(layer => layer.Config.Trainable));
 
+            // test that the data type is as expected
+            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Config.DType == DType.Float32));
+
             // test for activation values
-            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Config.Activation != null));
-            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Config.Activation.CompareTo("linear") == 0));
+            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Config.Activation == Activation.Linear));
         }
 
         [TestMethod]

@@ -5,39 +5,9 @@ module Model =
     open System.IO
     open System.Text
     open Newtonsoft.Json
-
-#if FSHARP_TYPES
-    open System.Collections.Generic
-    type DType =
-    | Float
-    | Int
-
-    type Activation =
-    | Linear
-    | ReLu
-    | Softmax
-
-    type LayerConfiguration = {
-        Name:string;
-        Trainable:bool;
-        BatchInputShape:array<int option>;
-        DType:DType;
-        Units:int;
-        Activation:Activation;
-        UseBias:bool;
-    }
-
-    type Layer = {
-        ClassName:string;
-        Config:LayerConfiguration;
-        Variables:IDictionary<string, float[,]>;
-    }
-
-    type SequentialModel = {
-        Name:string;
-        Layers:IList<Layer>;
-    }
-#else 
+#if FSHARP_MODEL_TYPES
+    open Types
+#else
     open SRODecoderEngine
 #endif
 

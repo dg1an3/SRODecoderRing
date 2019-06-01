@@ -10,21 +10,30 @@ using Newtonsoft.Json.Serialization;
 
 namespace SRODecoderEngine
 {
+    public enum DType
+    {
+        Float32,
+        Float64,
+    }
+
+    public enum Activation
+    {
+        Linear,
+        ReLu,
+        SoftMax,
+    }
+
     public class SequentialModel
     {
-        // [JsonProperty("name")]
         public string Name { get; set; }
 
-        // [JsonProperty("layers")]
         public IList<Layer> Layers { get; set; }
     }
 
     public class Layer
     {
-        // [JsonProperty("class_name")]
         public string ClassName { get; set; }
 
-        // [JsonProperty("config")]
         public LayerConfiguration Config { get; set; }
 
         public IDictionary<string, double[,]> Variables { get; set; } = new Dictionary<string, double[,]>();
@@ -36,25 +45,18 @@ namespace SRODecoderEngine
 
         public bool Trainable { get; set; }
 
-        // [JsonProperty("batch_input_shape")]
         public int?[] BatchInputShape { get; set; }
 
-        // [JsonProperty("dtype")]
-        public string DType { get; set; }
+        public DType DType { get; set; }
 
-        // [JsonProperty("units")]
         public int Units { get; set; }
 
-        // [JsonProperty("activation")]
-        public string Activation { get; set; }
+        public Activation Activation { get; set; }
 
-        // [JsonProperty("use_bias")]
         public bool UseBias { get; set; }
 
-        // [JsonProperty("kernel_initializer")]
         public JObject KernelInitializer { get; set; }
 
-        // [JsonProperty("bias_initializer")]
         public JObject BiasInitializer { get; set; }
     }
 

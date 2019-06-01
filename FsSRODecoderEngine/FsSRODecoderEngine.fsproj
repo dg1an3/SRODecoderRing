@@ -4,7 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;FSHARP_MODEL_TYPES</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
+    <Compile Include="Types.fs" />
     <Compile Include="Dense.fs" />
     <Compile Include="Conv2d.fs" />
     <Compile Include="Model.fs" />

@@ -2,7 +2,11 @@
 
 module Dense =
     open System
+#if FSHARP_MODEL_TYPES
+    open Types
+#else
     open SRODecoderEngine
+#endif
 
     let predictForKernelBias (input:float[,]) (kernelTensor:float[,]) (biasTensor:float[,]) = 
         let batchCount = input.GetLength(0)
@@ -19,8 +23,8 @@ module Dense =
         let biasTensor = layer.Variables.["bias"]
         let activation = 
             match layer.Config.Activation with 
-            | "linear" -> id
-            | "relu" -> (fun x -> if x < 0.0 then 0.0 else x)
-            | _ -> raise(Exception())
+            | Linear -> id
+            | ReLu -> (fun x -> if x < 0.0 then 0.0 else x)
+            | Softmax -> id
         predictForKernelBias kernelTensor biasTensor input
         |> Array2D.map activation

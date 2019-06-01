@@ -84,7 +84,7 @@ module Model =
                 let [layerName; variableName] = label.Split('/') |> List.ofArray
                 let layer = 
                     model.Layers 
-                    |> Seq.find (fun layer -> layer.Configuration.Name.CompareTo(layerName) = 0)
+                    |> Seq.find (fun layer -> layer.Config.Name.CompareTo(layerName) = 0)
                 layer.Variables.Add(variableName, tensor))
         model
 

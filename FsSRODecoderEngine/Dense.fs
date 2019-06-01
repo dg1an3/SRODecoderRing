@@ -18,7 +18,7 @@ module Dense =
         let kernelTensor = layer.Variables.["kernel"]
         let biasTensor = layer.Variables.["bias"]
         let activation = 
-            match layer.Configuration.Activation with 
+            match layer.Config.Activation with 
             | "linear" -> id
             | "relu" -> (fun x -> if x < 0.0 then 0.0 else x)
             | _ -> raise(Exception())

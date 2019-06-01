@@ -26,22 +26,22 @@ namespace SRODecoderEngineTest
 
             // test that first has batch input shape
             Assert.IsTrue(engine.Model.Layers
-                .First().Configuration.BatchInputShape != null);
+                .First().Config.BatchInputShape != null);
             Assert.IsTrue(engine.Model.Layers
-                .Skip(1).All(layer => layer.Configuration.BatchInputShape == null));
+                .Skip(1).All(layer => layer.Config.BatchInputShape == null));
 
             // test that they have different names
             Assert.IsTrue(engine.Model.Layers
-                .Select(layer => layer.Configuration.Name)
+                .Select(layer => layer.Config.Name)
                 .Distinct().Count() 
                     == engine.Model.Layers.Count());
 
             // test if they are trainable
-            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Configuration.Trainable));
+            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Config.Trainable));
 
             // test for activation values
-            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Configuration.Activation != null));
-            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Configuration.Activation.CompareTo("linear") == 0));
+            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Config.Activation != null));
+            Assert.IsTrue(engine.Model.Layers.All(layer => layer.Config.Activation.CompareTo("linear") == 0));
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace SRODecoderEngineTest
             {
                 Layer currentLayer = engine.Model.Layers[nLayer];
                 double[,] kernelTensor = currentLayer.Variables["kernel"];
-                if (currentLayer.Configuration.UseBias)
+                if (currentLayer.Config.UseBias)
                 {
                     Assert.IsTrue(currentLayer.Variables.ContainsKey("bias"));
                     double[,] biasTensor = currentLayer.Variables["bias"];
@@ -68,12 +68,12 @@ namespace SRODecoderEngineTest
                     Assert.IsFalse(currentLayer.Variables.ContainsKey("bias"));
                 }
 
-                Assert.AreEqual(currentLayer.Configuration.Units,
+                Assert.AreEqual(currentLayer.Config.Units,
                     kernelTensor.GetLength(1));
 
                 if (nLayer > 0)
                 {
-                    Assert.IsTrue(currentLayer.Configuration.BatchInputShape == null);
+                    Assert.IsTrue(currentLayer.Config.BatchInputShape == null);
                     Layer previousLayer = engine.Model.Layers[nLayer - 1];
                     double[,] previousKernelTensor = previousLayer.Variables["kernel"];
                     Assert.AreEqual(previousKernelTensor.GetLength(1), 
@@ -81,8 +81,8 @@ namespace SRODecoderEngineTest
                 }                
                 else
                 {
-                    Assert.IsTrue(currentLayer.Configuration.BatchInputShape != null);
-                    Assert.AreEqual(currentLayer.Configuration.BatchInputShape[1].Value,
+                    Assert.IsTrue(currentLayer.Config.BatchInputShape != null);
+                    Assert.AreEqual(currentLayer.Config.BatchInputShape[1].Value,
                         kernelTensor.GetLength(0));
                 }
             }

@@ -6,25 +6,26 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using Newtonsoft.Json.Serialization;
 
 namespace SRODecoderEngine
 {
     public class SequentialModel
     {
-        [JsonProperty("name")]
+        // [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("layers")]
+        // [JsonProperty("layers")]
         public IList<Layer> Layers { get; set; }
     }
 
     public class Layer
     {
-        [JsonProperty("class_name")]
+        // [JsonProperty("class_name")]
         public string ClassName { get; set; }
 
-        [JsonProperty("config")]
-        public LayerConfiguration Configuration { get; set; }
+        // [JsonProperty("config")]
+        public LayerConfiguration Config { get; set; }
 
         public IDictionary<string, double[,]> Variables { get; set; } = new Dictionary<string, double[,]>();
     }
@@ -35,25 +36,25 @@ namespace SRODecoderEngine
 
         public bool Trainable { get; set; }
 
-        [JsonProperty("batch_input_shape")]
+        // [JsonProperty("batch_input_shape")]
         public int?[] BatchInputShape { get; set; }
 
-        [JsonProperty("dtype")]
+        // [JsonProperty("dtype")]
         public string DType { get; set; }
 
-        [JsonProperty("units")]
+        // [JsonProperty("units")]
         public int Units { get; set; }
 
-        [JsonProperty("activation")]
+        // [JsonProperty("activation")]
         public string Activation { get; set; }
 
-        [JsonProperty("use_bias")]
+        // [JsonProperty("use_bias")]
         public bool UseBias { get; set; }
 
-        [JsonProperty("kernel_initializer")]
+        // [JsonProperty("kernel_initializer")]
         public JObject KernelInitializer { get; set; }
 
-        [JsonProperty("bias_initializer")]
+        // [JsonProperty("bias_initializer")]
         public JObject BiasInitializer { get; set; }
     }
 
@@ -65,7 +66,14 @@ namespace SRODecoderEngine
             using (var modelReader = new StreamReader(modelStream, Encoding.UTF8))
             {
                 var json = modelReader.ReadToEnd();
-                Model = JsonConvert.DeserializeObject<SequentialModel>(json);
+                Model = JsonConvert.DeserializeObject<SequentialModel>(json, 
+                    new JsonSerializerSettings()
+                    {
+                        ContractResolver = new DefaultContractResolver
+                        {
+                            NamingStrategy = new SnakeCaseNamingStrategy()
+                        }
+                    });
             }
 
             if (weightsStream == null)
@@ -78,7 +86,7 @@ namespace SRODecoderEngine
                 var currentLayer = 
                     Model.Layers
                         .FirstOrDefault(layer => 
-                            layer.Configuration.Name.CompareTo(layerName) == 0);
+                            layer.Config.Name.CompareTo(layerName) == 0);
                 Trace.Assert(currentLayer != null, string.Format("unable to find layer with name {0}", layerName));
 
                 var name = NameFromVariableLabel(kvp.Key);
@@ -133,7 +141,7 @@ namespace SRODecoderEngine
 
         public double[,] Predict(double[,] input)
         {
-            var inSize = Model.Layers[0].Configuration.BatchInputShape[1].Value;
+            var inSize = Model.Layers[0].Config.BatchInputShape[1].Value;
             Trace.Assert(input.GetLength(1) == inSize);
 
             var kernelTensor0 = Model.Layers[0].Variables["kernel"];

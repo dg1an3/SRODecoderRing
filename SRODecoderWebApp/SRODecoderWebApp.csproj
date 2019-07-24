@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8C78CC1A-A9E7-4DA9-A8F1-92D8D313874A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SRODecoderWebApp</RootNamespace>
+    <AssemblyName>SRODecoderWebApp</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <IsCSharpXamlForHtml5>true</IsCSharpXamlForHtml5>
+    <CSharpXamlForHtml5OutputType>Application</CSharpXamlForHtml5OutputType>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(MSBuildProgramFiles32)\MSBuild\CSharpXamlForHtml5\InternalStuff\Simulator\CSharpXamlForHtml5.Simulator.exe</StartProgram>
+    <StartArguments>"SRODecoderWebApp.dll"</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;CSHARP_XAML_FOR_HTML5;CSHTML5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;CSHARP_XAML_FOR_HTML5;CSHTML5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CSharpXamlForHtml5">
+      <HintPath>$(MSBuildProgramFiles32)\MSBuild\CSharpXamlForHtml5\AssembliesToReference\CSharpXamlForHtml5.dll</HintPath>
+    </Reference>
+    <Reference Include="CSharpXamlForHtml5.System.dll">
+      <HintPath>$(MSBuildProgramFiles32)\MSBuild\CSharpXamlForHtml5\AssembliesToReference\CSharpXamlForHtml5.System.dll.dll</HintPath>
+    </Reference>
+    <Reference Include="CSharpXamlForHtml5.System.Runtime.Serialization.dll">
+      <HintPath>$(MSBuildProgramFiles32)\MSBuild\CSharpXamlForHtml5\AssembliesToReference\CSharpXamlForHtml5.System.Runtime.Serialization.dll.dll</HintPath>
+    </Reference>
+    <Reference Include="CSharpXamlForHtml5.System.ServiceModel.dll">
+      <HintPath>$(MSBuildProgramFiles32)\MSBuild\CSharpXamlForHtml5\AssembliesToReference\CSharpXamlForHtml5.System.ServiceModel.dll.dll</HintPath>
+    </Reference>
+    <Reference Include="CSharpXamlForHtml5.System.Xaml.dll">
+      <HintPath>$(MSBuildProgramFiles32)\MSBuild\CSharpXamlForHtml5\AssembliesToReference\CSharpXamlForHtml5.System.Xaml.dll.dll</HintPath>
+    </Reference>
+    <Reference Include="CSharpXamlForHtml5.System.Xml.dll">
+      <HintPath>$(MSBuildProgramFiles32)\MSBuild\CSharpXamlForHtml5\AssembliesToReference\CSharpXamlForHtml5.System.Xml.dll.dll</HintPath>
+    </Reference>
+    <Reference Include="JSIL.Meta">
+      <HintPath>$(MSBuildProgramFiles32)\MSBuild\CSharpXamlForHtml5\AssembliesToReference\JSIL.Meta.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Page_SRODecoderRing.xaml.cs">
+      <DependentUpon>Page_SRODecoderRing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Page1_Controls.xaml.cs">
+      <DependentUpon>Page1_Controls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Page2_Panels.xaml.cs">
+      <DependentUpon>Page2_Panels.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Page3_Binding.xaml.cs">
+      <DependentUpon>Page3_Binding.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Page3_KilometersToMilesConverter.cs" />
+    <Compile Include="Page4_WCF.xaml.cs">
+      <DependentUpon>Page4_WCF.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Page5_Other.xaml.cs">
+      <DependentUpon>Page5_Other.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Page6_About.xaml.cs">
+      <DependentUpon>Page6_About.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Planet.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service References\ServiceReference1\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Planets\Earth.png" />
+    <Content Include="Planets\Jupiter.png" />
+    <Content Include="Logo.png" />
+    <Content Include="Planets\Mars.png" />
+    <Content Include="Planets\Mercury.png" />
+    <Content Include="Planets\Neptune.png" />
+    <Content Include="Planets\Saturn.png" />
+    <Content Include="Planets\Uranus.png" />
+    <Content Include="Planets\Venus.png" />
+    <None Include="Service References\ServiceReference1\AddOrUpdateToDoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference1\DeleteToDoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference1\GetToDosResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServiceReference1\Service1.disco" />
+    <None Include="Service References\ServiceReference1\configuration91.svcinfo" />
+    <None Include="Service References\ServiceReference1\configuration.svcinfo" />
+    <None Include="Service References\ServiceReference1\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="SampleAudio.mp3" />
+    <Content Include="SampleVideo.mp4" />
+    <None Include="Service References\ServiceReference1\Service1.wsdl">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference1\Service11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference1\ToDoItem.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Service References\ServiceReference1\Service1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ServiceReference1\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Page6_About.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Page5_Other.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Page4_WCF.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Page3_Binding.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Page2_Panels.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Page1_Controls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Page_SRODecoderRing.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildProgramFiles32)\MSBuild\CSharpXamlForHtml5\InternalStuff\Targets\CSharpXamlForHtml5.Build.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

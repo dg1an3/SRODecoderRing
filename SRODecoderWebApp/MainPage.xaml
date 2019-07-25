@@ -34,7 +34,7 @@
                 </ScrollViewer>
             </Grid>
         </Grid>
-        <Border x:Name="SplashScreen" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!--<Border x:Name="SplashScreen" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Border Width="300" HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" Padding="20,0,10,20">
                 <Border.Effect>
                     <DropShadowEffect ShadowDepth="5" Color="Black" BlurRadius="10" Opacity="0.3" />
@@ -47,20 +47,11 @@
                     <Button Content="Continue" FontSize="22" Foreground="White" Background="#FFE44D26" Margin="0,10,0,0" HorizontalAlignment="Center" Click="SplashScreenContinueButton_Click" Padding="10"/>
                 </StackPanel>
             </Border>
-        </Border>
+        </Border>-->
         <Border x:Name="LoadingMessage" Visibility="Collapsed" Background="#44FFFFFF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Border Background="#88000000" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="26,20" CornerRadius="20">
                 <TextBlock Text="Loading, please wait..." Foreground="White" FontSize="22"/>
             </Border>
-        </Border>
-        <Border Background="#AAE44D26" VerticalAlignment="Top">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,3,0,3">
-                <TextBlock Foreground="White" FontSize="14">
-                    <Run Text="NEW:" FontWeight="Bold"/>
-                    <Run Text="A much improved Showcase is available"/>
-                    <Hyperlink NavigateUri="https://github.com/cshtml5/CSHTML5.Samples.Showcase"><Run Text="HERE" Foreground="White" TextDecorations="Underline" FontWeight="Bold"/></Hyperlink>
-                </TextBlock>
-            </StackPanel>
         </Border>
     </Grid>
 </Page>

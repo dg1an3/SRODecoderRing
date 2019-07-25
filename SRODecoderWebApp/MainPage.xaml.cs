@@ -214,7 +214,7 @@ namespace SRODecoderWebApp
 
         void SplashScreenContinueButton_Click(object sender, RoutedEventArgs e)
         {
-            LayoutRoot.Children.Remove(SplashScreen);
+            // LayoutRoot.Children.Remove(SplashScreen);
         }
     }
 }

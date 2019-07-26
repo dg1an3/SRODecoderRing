@@ -48,6 +48,8 @@ namespace SRODecoderWebApp
                 new MenuItem(){ DisplayName = "Other", Type = typeof(Page5_Other) },
                 new MenuItem(){ DisplayName = "About", Type = typeof(Page6_About) }
             };
+
+            MenuItemsContainer.SelectedIndex = 0;
         }
 
         private async void MenuItemsContainer_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -189,7 +191,7 @@ namespace SRODecoderWebApp
         {
             Rect windowBounds = Window.Current.Bounds;
             double displayWidth = windowBounds.Width;
-            if (displayWidth < 650)
+            if (displayWidth < 10000)
             {
                 if (_currentState == CurrentState.LargeResolution_SeeBothMenuAndPage)
                 {

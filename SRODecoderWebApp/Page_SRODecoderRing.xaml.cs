@@ -10,29 +10,36 @@ using Windows.UI.Xaml.Media;
 
 namespace SRODecoderWebApp
 {
+    class Vector
+    {
+        public string Label { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Z { get; set; }
+    }
     public partial class Page_SRODecoderRing : Page
     {
         public Page_SRODecoderRing()
         {
             this.InitializeComponent();
 
-            // Populate the ComboBox and ListBox with the list of planets:
-            ComboBox1.ItemsSource = Planet.GetListOfPlanets();
-            ListBox1.ItemsSource = Planet.GetListOfPlanets();
-
             // Populate the data grids with the list of planets
-            DataGrid1.ItemsSource = Planet.GetListOfPlanets();
-            DataGrid2.ItemsSource = Planet.GetListOfPlanets();
+            MatrixDataGrid.ItemsSource = new List<Vector>()
+            {
+                new Vector() { Label = "Row 1", X = 1.1, Y = 1.0, Z = 1.0 },
+                new Vector() { Label = "Row 2", X = 1.2, Y = 1.0, Z = 1.0 },
+                new Vector() { Label = "Row 3", X = 1.0, Y = 0.99, Z = 1.1},
+            };
+            TranslateRotateDataGrid.ItemsSource = new List<Vector>()
+            {
+                new Vector() { Label = "Translate", X = -10.0, Y = 20.0, Z = 30.0 },
+                new Vector() { Label = "Rotate", X = -10.0, Y = 20.0, Z = 30.0 }
+            };
         }
 
         void MyButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("You clicked me.");
-        }
-
-        void OKButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Your name is: " + TextBoxName.Text);
         }
 
         void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -43,31 +50,6 @@ namespace SRODecoderWebApp
         void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("You unchecked me.");
-        }
-
-        void RadioButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(RadioButton1.IsChecked == true ? "Option 1 selected" : "Option 2 selected");
-        }
-
-        void ButtonToPlayAudio_Click(object sender, RoutedEventArgs e)
-        {
-            MediaElementForAudio.Play();
-        }
-
-        void ButtonToPauseAudio_Click(object sender, RoutedEventArgs e)
-        {
-            MediaElementForAudio.Pause();
-        }
-
-        void ButtonToPlayVideo_Click(object sender, RoutedEventArgs e)
-        {
-            MediaElementForVideo.Play();
-        }
-
-        void ButtonToPauseVideo_Click(object sender, RoutedEventArgs e)
-        {
-            MediaElementForVideo.Pause();
         }
     }
 }

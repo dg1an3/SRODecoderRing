@@ -10,7 +10,7 @@
     <Grid x:Name="LayoutRoot" Background="White">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LeftColumn" Width="270"/>
+                <ColumnDefinition x:Name="LeftColumn" Width="0"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <StackPanel x:Name="TitleAndTheMenu" Grid.Column="0" Orientation="Vertical">

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRODecoderEngine", "SRODeco
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRODecoderEngineTest", "SRODecoderEngineTest\SRODecoderEngineTest.csproj", "{573E6AD3-0F0A-4CA8-B75E-CC185082C74B}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsSRODecoderEngine", "FsSRODecoderEngine\FsSRODecoderEngine.fsproj", "{579B6034-ED86-404B-819E-F2BAAB11D9F1}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsSroDecoderEngine", "FsSRODecoderEngine\FsSroDecoderEngine.fsproj", "{579B6034-ED86-404B-819E-F2BAAB11D9F1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PythonWrapper", "PythonWrapper", "{BFE23393-1072-47FA-A2FF-4B2790B952BE}"
 EndProject

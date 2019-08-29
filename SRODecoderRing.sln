@@ -13,6 +13,12 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsSRODecoderEngine", "FsSRO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRODecoderWebApp", "SRODecoderWebApp\SRODecoderWebApp.csproj", "{8C78CC1A-A9E7-4DA9-A8F1-92D8D313874A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLineReverse", "CommandLineReverse\CommandLineReverse.csproj", "{F780E7A1-1A00-4E85-AB8A-D84CCE75B8E8}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsTestAsyncShellClient", "FsAsyncShellClient\FsTestAsyncShellClient.fsproj", "{D58E7D4D-B433-47B6-8296-272AD4E6F2B4}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonReverse", "PythonReverse\PythonReverse.pyproj", "{ABB4FE25-4556-45D3-9FF3-3B921110D555}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +43,16 @@ Global
 		{8C78CC1A-A9E7-4DA9-A8F1-92D8D313874A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C78CC1A-A9E7-4DA9-A8F1-92D8D313874A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C78CC1A-A9E7-4DA9-A8F1-92D8D313874A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F780E7A1-1A00-4E85-AB8A-D84CCE75B8E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F780E7A1-1A00-4E85-AB8A-D84CCE75B8E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F780E7A1-1A00-4E85-AB8A-D84CCE75B8E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F780E7A1-1A00-4E85-AB8A-D84CCE75B8E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D58E7D4D-B433-47B6-8296-272AD4E6F2B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D58E7D4D-B433-47B6-8296-272AD4E6F2B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D58E7D4D-B433-47B6-8296-272AD4E6F2B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D58E7D4D-B433-47B6-8296-272AD4E6F2B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABB4FE25-4556-45D3-9FF3-3B921110D555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABB4FE25-4556-45D3-9FF3-3B921110D555}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

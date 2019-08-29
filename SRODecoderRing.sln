@@ -19,6 +19,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsTestAsyncShellClient", "F
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonReverse", "PythonReverse\PythonReverse.pyproj", "{ABB4FE25-4556-45D3-9FF3-3B921110D555}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PythonWrapper", "PythonWrapper", "{BFE23393-1072-47FA-A2FF-4B2790B952BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DecoderUI", "DecoderUI", "{83193347-ECE4-48B8-A8F2-D278FD226907}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8C78CC1A-A9E7-4DA9-A8F1-92D8D313874A} = {83193347-ECE4-48B8-A8F2-D278FD226907}
+		{F780E7A1-1A00-4E85-AB8A-D84CCE75B8E8} = {BFE23393-1072-47FA-A2FF-4B2790B952BE}
+		{D58E7D4D-B433-47B6-8296-272AD4E6F2B4} = {BFE23393-1072-47FA-A2FF-4B2790B952BE}
+		{ABB4FE25-4556-45D3-9FF3-3B921110D555} = {BFE23393-1072-47FA-A2FF-4B2790B952BE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8ED70C5-78A2-4855-99F3-30FA0C7FB536}

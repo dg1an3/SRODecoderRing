@@ -11,17 +11,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRODecoderEngineTest", "SRO
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsSRODecoderEngine", "FsSRODecoderEngine\FsSRODecoderEngine.fsproj", "{579B6034-ED86-404B-819E-F2BAAB11D9F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRODecoderWebApp", "SRODecoderWebApp\SRODecoderWebApp.csproj", "{8C78CC1A-A9E7-4DA9-A8F1-92D8D313874A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLineReverse", "CommandLineReverse\CommandLineReverse.csproj", "{F780E7A1-1A00-4E85-AB8A-D84CCE75B8E8}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsTestAsyncShellClient", "FsAsyncShellClient\FsTestAsyncShellClient.fsproj", "{D58E7D4D-B433-47B6-8296-272AD4E6F2B4}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonReverse", "PythonReverse\PythonReverse.pyproj", "{ABB4FE25-4556-45D3-9FF3-3B921110D555}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PythonWrapper", "PythonWrapper", "{BFE23393-1072-47FA-A2FF-4B2790B952BE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DecoderUI", "DecoderUI", "{83193347-ECE4-48B8-A8F2-D278FD226907}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SRODecoderWebApp", "DecoderUI\SRODecoderWebApp\SRODecoderWebApp.csproj", "{8C78CC1A-A9E7-4DA9-A8F1-92D8D313874A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandLineReverse", "PythonWrapper\CommandLineReverse\CommandLineReverse.csproj", "{F780E7A1-1A00-4E85-AB8A-D84CCE75B8E8}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsTestAsyncShellClient", "PythonWrapper\FsAsyncShellClient\FsTestAsyncShellClient.fsproj", "{D58E7D4D-B433-47B6-8296-272AD4E6F2B4}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonReverse", "PythonWrapper\PythonReverse\PythonReverse.pyproj", "{ABB4FE25-4556-45D3-9FF3-3B921110D555}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

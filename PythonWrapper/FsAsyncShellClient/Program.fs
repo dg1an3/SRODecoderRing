@@ -1,7 +1,6 @@
 ﻿open System.Threading.Tasks
 open System.IO
 open System.Diagnostics
-open FSharp.Control.Tasks.V2
 
 let invokeExternalAsync<'TRequest, 'TResponse> 
         exePath argFormat requestSerialize responseDeserialize (request:'TRequest) =
@@ -23,6 +22,8 @@ let invokeExternalAsync<'TRequest, 'TResponse>
     proc.EnableRaisingEvents <- true
     proc.Exited.Add fileOutToResult
     tcs.Task
+
+open FSharp.Control.Tasks.V2
 
 [<EntryPoint>]
 let main argv = 

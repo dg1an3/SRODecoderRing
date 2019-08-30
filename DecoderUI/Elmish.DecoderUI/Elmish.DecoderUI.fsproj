@@ -46,6 +46,9 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Model.fs" />
+    <Compile Include="DenseNetwork.fs" />
+    <Compile Include="Update.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
@@ -67,6 +70,9 @@
     <Reference Include="System.ValueTuple">
       <HintPath>..\..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="TaskBuilder.fs">
+      <HintPath>..\..\packages\TaskBuilder.fs.2.1.0\lib\net46\TaskBuilder.fs.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

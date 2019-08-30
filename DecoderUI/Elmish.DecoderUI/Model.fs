@@ -14,16 +14,23 @@ let noLocks : IecCouchShiftLockExpression =
     function
     | _ -> []
 
-let lockRotations : IecCouchShiftLockExpression = 
+let lockAllShifts : IecCouchShiftLockExpression = 
     function
     | couchShift ->
-        [ <@couchShift.Rx@>; 
+        [ <@couchShift.Tx@>; 
+            <@couchShift.Ty@>; 
+            <@couchShift.Tz@>;
+            <@couchShift.Rx@>; 
             <@couchShift.Ry@>; 
             <@couchShift.Rz@> ]
 
 let initCouchShift = 
-    { Tx=0.0m; Ty = 0.0m; Tz = 0.0m;
-        Rx=0.0m; Ry = 0.0m; Rz = 0.0m; }
+    { Tx=0.0m;
+        Ty = 0.0m;
+        Tz = 0.0m;
+        Rx = 0.0m;
+        Ry = 0.0m;
+        Rz = 0.0m; }
 
 type PatientPosition =
 | HeadFirstSupine

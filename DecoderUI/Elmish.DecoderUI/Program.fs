@@ -1,5 +1,28 @@
 ﻿open Microsoft.FSharp.Quotations
 open Elmish
+open System
+
+type IecCouchShiftModel = 
+    { Tx:decimal; Ty:decimal; Tz:decimal; 
+        Rx:decimal; Ry:decimal; Rz:decimal; }
+
+type IecCouchShiftLockExpression =
+    IecCouchShiftModel -> Expr<decimal> list
+
+let noLocks : IecCouchShiftLockExpression = 
+    function
+    | _ -> []
+
+let lockRotations : IecCouchShiftLockExpression = 
+    function
+    | couchShift ->
+        [ <@couchShift.Rx@>; 
+            <@couchShift.Ry@>; 
+            <@couchShift.Rz@> ]
+
+let initCouchShift = 
+    { Tx=0.0m; Ty = 0.0m; Tz = 0.0m;
+        Rx=0.0m; Ry = 0.0m; Rz = 0.0m; }
 
 type PatientPosition =
 | HeadFirstSupine
@@ -17,57 +40,70 @@ type TransformationOrder =
 | RxRyRzT
 | RzRyRxT
 
-type IecCouchShiftModel = 
-    { Tx:decimal; Ty:decimal; Tz:decimal; 
-        Rx:decimal; Ry:decimal; Rz:decimal; }
+type GeometryEstimates =
+    PatientPosition * TransformationOrder -> decimal
 
-let initCouchShift = 
-    { Tx=0.0m; Ty = 0.0m; Tz = 0.0m;
-        Rx=0.0m; Ry = 0.0m; Rz = 0.0m; }
+let uniformGeometryEstimates : GeometryEstimates =
+    let numberOfPositions = 
+        Enum.GetValues(typeof<PatientPosition>).Length
+    let numberOfOrders = 
+        Enum.GetValues(typeof<TransformationOrder>).Length
+    function
+    | (_:PatientPosition, _:TransformationOrder) ->
+        1.0m / decimal (numberOfPositions * numberOfOrders)
+
+type GeometryEstimateMaximizationParameters =
+    { SelectPatientPosition : PatientPosition option;
+        SelectTransformationOrder : TransformationOrder option; }
+
+let noMaximization = 
+    { SelectPatientPosition = None;
+        SelectTransformationOrder = None }
+
+let maximizePosition position = 
+    { SelectPatientPosition = Some position;
+        SelectTransformationOrder = None }
 
 type Model = 
     { SroMatrix : decimal[];
         IecCouchShift : IecCouchShiftModel;
-        GeometryEstimates : PatientPosition * TransformationOrder -> decimal;
-        LockExpression : IecCouchShiftModel -> Expr<bool>;
-        MaximizeExpression : PatientPosition * TransformationOrder -> Expr<bool>; }
+        LockExpression : IecCouchShiftLockExpression;
+        GeometryEstimates : GeometryEstimates;
+        MaximizeForGeometry : GeometryEstimateMaximizationParameters; }
 
-let init () =     
-    let initLockExpression (couchShift:IecCouchShiftModel) =
-        let _example = <@couchShift.Tx = 0.0m && couchShift.Ty = 0.0m@>
-        <@true@>        
-    let initGeometryEstimate (patpos,xord) = 
-        1.0m / (8.0m*4.0m)
-    let initMaximizeExpression (patpos,xord) =
-        let _example = <@patpos = HeadFirstSupine && xord = TRzRyRx@>
-        <@true@>
+let init () =
     { SroMatrix = [||];
         IecCouchShift = initCouchShift;
-        LockExpression = initLockExpression;
-        GeometryEstimates = initGeometryEstimate;
-        MaximizeExpression = initMaximizeExpression; },
+        LockExpression = noLocks;
+        GeometryEstimates = uniformGeometryEstimates;
+        MaximizeForGeometry = noMaximization; },
         Cmd.none
 
 type Message = 
 | LoadSroMatrix of decimal[]
 | UpdateShift of IecCouchShiftModel
-| Lock of (IecCouchShiftModel -> Expr<bool>)
-| Unlock of (IecCouchShiftModel -> Expr<bool>)
-| Maximize of (PatientPosition * TransformationOrder -> Expr<bool>)
-| UpdateEstimates of (PatientPosition * TransformationOrder -> decimal) * IecCouchShiftModel
+| Lock of (IecCouchShiftModel -> Expr<decimal>)
+| Unlock of (IecCouchShiftModel -> Expr<decimal>)
+| Maximize of GeometryEstimateMaximizationParameters
+| UpdateEstimates of GeometryEstimates * IecCouchShiftModel
 | Error of exn
 
 let estimateFromMatrixAndShifts model =
     let { SroMatrix = matrix; 
             IecCouchShift = couchShift; } = model
-    (fun (patpos,xord) -> 0.0m), couchShift
+    let newGeometryEstimates = uniformGeometryEstimates
+    newGeometryEstimates, couchShift
 
 let optimizeWithConstraints model =
     let { SroMatrix = matrix; 
             IecCouchShift = couchShift;
-            LockExpression = lockExpr;
-            MaximizeExpression = maxExpr; } = model            
-    (fun (patpos,xord) -> 0.0m), couchShift
+            LockExpression = lockExpression;
+            MaximizeForGeometry = geometryMaximizationParameters } = model
+    let { SelectPatientPosition = patientPositionOption;
+            SelectTransformationOrder = transformationOrderOption } = geometryMaximizationParameters
+    let newCouchShift = couchShift
+    let newGeometryEstimates = uniformGeometryEstimates
+    newGeometryEstimates, newCouchShift
 
 let update msg model = 
     match msg with
@@ -77,22 +113,23 @@ let update msg model =
     | UpdateShift newShift -> 
         { model with IecCouchShift = newShift },
             Cmd.OfFunc.either estimateFromMatrixAndShifts model UpdateEstimates Error
-    | Lock expr -> 
-        // update offset
+    | Lock singleLockExpresssion ->  // update offset
+        let shift = model.IecCouchShift
+        let newLockExpression couchShift = 
+            singleLockExpresssion couchShift :: model.LockExpression couchShift
+        { model with 
+            IecCouchShift = shift; 
+            LockExpression = newLockExpression },
+            Cmd.OfFunc.either optimizeWithConstraints model UpdateEstimates Error
+    | Unlock singleLockExpresssion -> // update offset if matrix is set
         let shift = model.IecCouchShift
         { model with 
             IecCouchShift = shift; 
-            LockExpression = expr },
-            Cmd.OfFunc.either optimizeWithConstraints model UpdateEstimates Error
-    | Unlock expr -> 
-        // update offset if matrix is set
-        let shift = model.IecCouchShift
-        { model with 
-            IecCouchShift = shift; LockExpression = expr },
+            LockExpression = model.LockExpression },
             Cmd.OfFunc.either optimizeWithConstraints model UpdateEstimates Error
     | Maximize expr -> 
         { model with 
-            MaximizeExpression = expr },
+            MaximizeForGeometry = expr },
             Cmd.OfFunc.either optimizeWithConstraints model UpdateEstimates Error
     | UpdateEstimates (estimateFunc, couchShifts) ->
         { model with 

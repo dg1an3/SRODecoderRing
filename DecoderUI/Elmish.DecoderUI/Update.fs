@@ -14,37 +14,58 @@ type Message =
 | UpdateEstimates of GeometryEstimates * IecCouchShiftModel
 | Error of exn
 
-let update msg model = 
-    match msg with
-    | LoadSroMatrix matrix -> 
-        { model with SroMatrix = matrix }, 
-            Cmd.OfFunc.either DenseNetwork.optimizeWithConstraints model UpdateEstimates Error
-    | UpdateShift newShift -> 
-        { model with IecCouchShift = newShift },
-            Cmd.OfAsync.either DenseNetwork.estimateFromMatrixAndShiftsAsync model UpdateEstimates Error
-    | Lock singleLockExpresssion ->  // update offset
-        let shift = model.IecCouchShift
-        let newLockExpression couchShift = 
-            singleLockExpresssion couchShift :: model.LockExpression couchShift
-        { model with 
-            IecCouchShift = shift; 
-            LockExpression = newLockExpression },
-            Cmd.OfFunc.either DenseNetwork.optimizeWithConstraints model UpdateEstimates Error
-    | Unlock singleLockExpresssion -> // update offset if matrix is set
-        let shift = model.IecCouchShift
-        { model with 
-            IecCouchShift = shift; 
-            LockExpression = model.LockExpression },
-            Cmd.OfFunc.either DenseNetwork.optimizeWithConstraints model UpdateEstimates Error
-    | Maximize expr -> 
-        { model with 
-            MaximizeForGeometry = expr },
-            Cmd.OfFunc.either DenseNetwork.optimizeWithConstraints model UpdateEstimates Error
-    | UpdateEstimates (estimateFunc, couchShifts) ->
-        { model with 
-            GeometryEstimates = estimateFunc;
-            IecCouchShift = couchShifts },
-            Cmd.none
-    | Error excn -> 
-        model, Cmd.none
+let init (initMatrix:decimal[]) =
+    let initModel =
+        { SroMatrix = initMatrix;
+            IecCouchShift = initCouchShift;
+            LockExpression = noLocks;
+            GeometryEstimates = uniformGeometryEstimates;
+            MaximizeForGeometry = noMaximization; }
+    let initCmd = 
+        Cmd.OfAsync.either 
+            DenseNetwork.optimizeWithConstraintsAsync initModel
+            UpdateEstimates Error
+    initModel, initCmd
 
+let update msg model = 
+    let updatedModel =
+        match msg with
+        | LoadSroMatrix matrix -> 
+            { model with SroMatrix = matrix }
+        | UpdateShift newShift -> 
+            { model with IecCouchShift = newShift }
+        | Lock singleLockExpresssion ->
+            let shift = model.IecCouchShift
+            let newLockExpression couchShift = 
+                singleLockExpresssion couchShift :: model.LockExpression couchShift
+            { model with 
+                IecCouchShift = shift; 
+                LockExpression = newLockExpression }
+        | Unlock singleLockExpresssion ->
+            let shift = model.IecCouchShift
+            { model with 
+                IecCouchShift = shift; 
+                LockExpression = model.LockExpression }
+        | Maximize expr -> 
+            { model with 
+                MaximizeForGeometry = expr }
+        | UpdateEstimates (estimateFunc, couchShifts) ->
+            { model with 
+                GeometryEstimates = estimateFunc;
+                IecCouchShift = couchShifts }
+        | Error excn -> 
+            model
+    
+    let nextCmd = 
+        match msg with
+        | UpdateShift _ -> 
+            Cmd.OfAsync.either 
+                DenseNetwork.estimateFromMatrixAndShiftsAsync updatedModel 
+                UpdateEstimates Error
+        | LoadSroMatrix _ | Lock _ | Unlock _ | Maximize _ -> 
+            Cmd.OfAsync.either 
+                DenseNetwork.optimizeWithConstraintsAsync updatedModel 
+                UpdateEstimates Error
+        | UpdateEstimates (_, _) | Error _ -> Cmd.none
+
+    updatedModel, nextCmd

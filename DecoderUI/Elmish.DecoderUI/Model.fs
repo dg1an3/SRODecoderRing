@@ -1,6 +1,5 @@
 ﻿module Model
 
-open Elmish
 open System
 open Microsoft.FSharp.Quotations
 
@@ -73,10 +72,3 @@ type Model =
         GeometryEstimates : GeometryEstimates;
         MaximizeForGeometry : GeometryEstimateMaximizationParameters; }
 
-let init () =
-    { SroMatrix = [||];
-        IecCouchShift = initCouchShift;
-        LockExpression = noLocks;
-        GeometryEstimates = uniformGeometryEstimates;
-        MaximizeForGeometry = noMaximization; },
-        Cmd.none

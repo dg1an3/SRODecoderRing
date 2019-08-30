@@ -8,7 +8,6 @@ open FSharp.Control.Tasks.V2
 
 open Model
 
-
 let invokeExternalAsync<'TRequest, 'TResponse> 
         exePath argFormat requestSerialize responseDeserialize (request:'TRequest) =
 
@@ -38,7 +37,7 @@ let estimateFromMatrixAndShiftsAsync model = async {
         let newGeometryEstimates = uniformGeometryEstimates
         return newGeometryEstimates, couchShift  }
 
-let optimizeWithConstraints model =
+let optimizeWithConstraintsAsync model = async {
     let { SroMatrix = matrix; 
             IecCouchShift = couchShift;
             LockExpression = lockExpression;
@@ -47,4 +46,4 @@ let optimizeWithConstraints model =
             SelectTransformationOrder = transformationOrderOption } = geometryMaximizationParameters
     let newCouchShift = couchShift
     let newGeometryEstimates = uniformGeometryEstimates
-    newGeometryEstimates, newCouchShift
+    return newGeometryEstimates, newCouchShift }

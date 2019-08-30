@@ -42,7 +42,7 @@ let init () =
 
 type Message = 
 | LoadSroMatrix of decimal[]
-| UpdateOffset of (IecCouchShiftModel -> IecCouchShiftModel)
+| UpdateShift of (IecCouchShiftModel -> IecCouchShiftModel)
 | Lock of (IecCouchShiftModel -> Expr<bool>)
 | Unlock of (IecCouchShiftModel -> Expr<bool>)
 | Maximize of (PatientPosition * TransformationOrder -> Expr<bool>)
@@ -52,7 +52,7 @@ let update msg model =
     | LoadSroMatrix matrix -> 
         { model with SroMatrix = matrix }, 
             Cmd.none
-    | UpdateOffset deltaFunc -> 
+    | UpdateShift deltaFunc -> 
         let newShift = (deltaFunc model.IecCouchShift)
         { model with IecCouchShift = newShift },
             Cmd.none

@@ -28,47 +28,79 @@ let initCouchShift =
 type Model = 
     { SroMatrix : decimal[];
         IecCouchShift : IecCouchShiftModel;
-        GeometryEstimate : PatientPosition * TransformationOrder -> decimal;
+        GeometryEstimates : PatientPosition * TransformationOrder -> decimal;
         LockExpression : IecCouchShiftModel -> Expr<bool>;
         MaximizeExpression : PatientPosition * TransformationOrder -> Expr<bool>; }
 
-let init () = 
+let init () =     
+    let initLockExpression (couchShift:IecCouchShiftModel) =
+        let _example = <@couchShift.Tx = 0.0m && couchShift.Ty = 0.0m@>
+        <@true@>        
+    let initGeometryEstimate (patpos,xord) = 
+        1.0m / (8.0m*4.0m)
+    let initMaximizeExpression (patpos,xord) =
+        let _example = <@patpos = HeadFirstSupine && xord = TRzRyRx@>
+        <@true@>
     { SroMatrix = [||];
         IecCouchShift = initCouchShift;
-        LockExpression = (fun offset -> <@ offset.Tx = 0.0m && offset.Ty = 0.0m @>);
-        GeometryEstimate = (fun (patpos,xord) -> 0.0m);
-        MaximizeExpression = (fun (patpos,xord) -> <@patpos = HeadFirstSupine@>); }, 
+        LockExpression = initLockExpression;
+        GeometryEstimates = initGeometryEstimate;
+        MaximizeExpression = initMaximizeExpression; },
         Cmd.none
 
 type Message = 
 | LoadSroMatrix of decimal[]
-| UpdateShift of (IecCouchShiftModel -> IecCouchShiftModel)
+| UpdateShift of IecCouchShiftModel
 | Lock of (IecCouchShiftModel -> Expr<bool>)
 | Unlock of (IecCouchShiftModel -> Expr<bool>)
 | Maximize of (PatientPosition * TransformationOrder -> Expr<bool>)
+| UpdateEstimates of (PatientPosition * TransformationOrder -> decimal) * IecCouchShiftModel
+| Error of exn
+
+let estimateFromMatrixAndShifts model =
+    let { SroMatrix = matrix; 
+            IecCouchShift = couchShift; } = model
+    (fun (patpos,xord) -> 0.0m), couchShift
+
+let optimizeWithConstraints model =
+    let { SroMatrix = matrix; 
+            IecCouchShift = couchShift;
+            LockExpression = lockExpr;
+            MaximizeExpression = maxExpr; } = model            
+    (fun (patpos,xord) -> 0.0m), couchShift
 
 let update msg model = 
     match msg with
     | LoadSroMatrix matrix -> 
         { model with SroMatrix = matrix }, 
-            Cmd.none
-    | UpdateShift deltaFunc -> 
-        let newShift = (deltaFunc model.IecCouchShift)
+            Cmd.OfFunc.either optimizeWithConstraints model UpdateEstimates Error
+    | UpdateShift newShift -> 
         { model with IecCouchShift = newShift },
-            Cmd.none
+            Cmd.OfFunc.either estimateFromMatrixAndShifts model UpdateEstimates Error
     | Lock expr -> 
         // update offset
         let shift = model.IecCouchShift
-        { model with IecCouchShift = shift; LockExpression = expr },
-            Cmd.none
+        { model with 
+            IecCouchShift = shift; 
+            LockExpression = expr },
+            Cmd.OfFunc.either optimizeWithConstraints model UpdateEstimates Error
     | Unlock expr -> 
         // update offset if matrix is set
         let shift = model.IecCouchShift
-        { model with IecCouchShift = shift; LockExpression = expr },
-            Cmd.none
+        { model with 
+            IecCouchShift = shift; LockExpression = expr },
+            Cmd.OfFunc.either optimizeWithConstraints model UpdateEstimates Error
     | Maximize expr -> 
-        { model with MaximizeExpression = expr },
+        { model with 
+            MaximizeExpression = expr },
+            Cmd.OfFunc.either optimizeWithConstraints model UpdateEstimates Error
+    | UpdateEstimates (estimateFunc, couchShifts) ->
+        { model with 
+            GeometryEstimates = estimateFunc;
+            IecCouchShift = couchShifts },
             Cmd.none
+    | Error excn -> 
+        model, Cmd.none
 
 [<EntryPoint>]
 let main argv = 

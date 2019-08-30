@@ -31,16 +31,21 @@ let update msg model =
         match msg with
         | UpdateShift newShift -> 
             { model with IecCouchShift = newShift }
-        | Lock singleLockExpresssion ->
+        | Lock singleLockExpression ->
             let shift = model.IecCouchShift
             let newLockExpression couchShift = 
-                singleLockExpresssion couchShift :: model.LockExpression couchShift
+                singleLockExpression couchShift :: model.LockExpression couchShift
+            // TODO: unset maximize if all are locked
             { model with IecCouchShift = shift; 
                             LockExpression = newLockExpression }
-        | Unlock singleLockExpresssion ->
+        | Unlock singleLockExpression ->
+            let newLockExpression couchShift = 
+                couchShift
+                |> model.LockExpression 
+                |> List.except [(singleLockExpression couchShift)]
             let shift = model.IecCouchShift
             { model with IecCouchShift = shift; 
-                            LockExpression = model.LockExpression }
+                            LockExpression = newLockExpression }
         | Maximize expr -> 
             { model with MaximizeForGeometry = expr }
         | UpdateEstimates (estimateFunc, couchShifts) ->

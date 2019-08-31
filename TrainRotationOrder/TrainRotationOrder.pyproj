@@ -5,7 +5,8 @@
     <ProjectGuid>b7973121-cbdf-4803-9ed9-e56e35c5a945</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>train_rotation_order.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -28,25 +29,21 @@
     <Compile Include="sro_decoder_optimize_input.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="train_rotation_order.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="generate_python.bat" />
-    <Content Include="model_config.json" />
+    <Content Include="sro_decoder_model\model_config.json" />
     <Content Include="notebook.bat" />
-    <Content Include="python_script.tpl" />
     <Content Include="sro_decoder_model\sro_decoder_mlp_model.h5" />
     <Content Include="sro_decoder_train.ipynb">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="test_linear_model.ipynb" />
+    <Content Include="test_linear_model\test_linear_model.ipynb" />
     <Content Include="test_linear_model\config.json" />
     <Content Include="test_linear_model\predict_posttrain.csv" />
     <Content Include="test_linear_model\predict_pretrain.csv" />
     <Content Include="test_linear_model\weights_posttrain.csv" />
     <Content Include="test_linear_model\weights_pretrain.csv" />
-    <Content Include="train_rotation_order.ipynb" />
-    <Content Include="weights.csv" />
+    <Content Include="sro_decoder_model\weights.csv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="sro_decoder_model\" />

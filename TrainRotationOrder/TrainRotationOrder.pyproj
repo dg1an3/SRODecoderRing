@@ -35,6 +35,7 @@
     <Content Include="model_config.json" />
     <Content Include="notebook.bat" />
     <Content Include="python_script.tpl" />
+    <Content Include="sro_decoder_model\sro_decoder_mlp_model.h5" />
     <Content Include="sro_decoder_train.ipynb">
       <SubType>Code</SubType>
     </Content>

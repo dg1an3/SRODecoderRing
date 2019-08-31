@@ -5,14 +5,16 @@
     <ProjectGuid>b7973121-cbdf-4803-9ed9-e56e35c5a945</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>sro_decoder_estimate.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>SRODecoderRing</Name>
     <RootNamespace>PythonApplication1</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>0.0/0.0/0.0/0.0/0.0/0.0/0.0/0.0/0.0/0.0/0.0/0.0</CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

@@ -18,6 +18,7 @@ let invokeExternalAsync<'TRequest, 'TResponse>
         (exePath, sprintf argFormat fileIn fileOut)
         |> ProcessStartInfo
         |> Process.Start
+    // proc.StandardOutput.ReadToEnd()
 
     let tcs = TaskCompletionSource<'TResponse>()
     let fileOutToResult _ = 
@@ -32,7 +33,7 @@ let invokeExternalAsync<'TRequest, 'TResponse>
 let estimateFromMatrixAndShiftsAsync model = async {
         let { SroMatrix = matrix; 
                 IecCouchShift = couchShift; } = model
-        let invokeFunc = invokeExternalAsync<string, string> "python" "module.py %s%s" id id
+        let invokeFunc = invokeExternalAsync<string, string> "python" "sro_decoder_estimate %s%s" id id
         let! result = invokeFunc (matrix.ToString()) |> Async.AwaitTask
         let newGeometryEstimates = uniformGeometryEstimates
         return newGeometryEstimates, couchShift  }

@@ -13,6 +13,11 @@ type Message =
 | UpdateEstimates of GeometryEstimates * IecCouchShiftModel
 | Error of exn
 
+let allLocked (lockExpressionList:IecCouchShiftLockExpression) = 
+    lockAllShifts initCouchShift  // test if we are lock all
+    |> List.except (lockExpressionList initCouchShift)
+    |> List.isEmpty
+
 let init (sroMatrix:decimal[]) =
     let initModel =
         { SroMatrix = sroMatrix;
@@ -35,7 +40,10 @@ let update msg model =
             let shift = model.IecCouchShift
             let newLockExpression couchShift = 
                 singleLockExpression couchShift :: model.LockExpression couchShift
-            // TODO: unset maximize if all are locked
+            let maximized = 
+                if allLocked model.LockExpression
+                then ()
+                else ()
             { model with IecCouchShift = shift; 
                             LockExpression = newLockExpression }
         | Unlock singleLockExpression ->
@@ -47,6 +55,10 @@ let update msg model =
             { model with IecCouchShift = shift; 
                             LockExpression = newLockExpression }
         | Maximize expr -> 
+            let unlocked = 
+                if allLocked model.LockExpression
+                then ()
+                else ()
             { model with MaximizeForGeometry = expr }
         | UpdateEstimates (estimateFunc, couchShifts) ->
             { model with 
@@ -55,9 +67,7 @@ let update msg model =
         | Error excn -> model
 
     let nextCmd =         
-        (msg, lockAllShifts initCouchShift  // test if we are lock all
-                |> List.except (model.LockExpression initCouchShift)
-                |> List.isEmpty)
+        (msg, allLocked model.LockExpression)
         |> function 
         | UpdateShift _, true -> 
             Cmd.OfAsync.either 

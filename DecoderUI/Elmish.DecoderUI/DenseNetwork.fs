@@ -1,42 +1,44 @@
 ﻿module DenseNetwork
 
-open System.IO
 open System.Diagnostics
-open System.Threading.Tasks
-
-open FSharp.Control.Tasks.V2
 
 open Model
 
-let invokeExternalAsync<'TRequest, 'TResponse> 
-        exePath argFormat requestSerialize responseDeserialize (request:'TRequest) =
-
-    let fileIn, fileOut = Path.GetTempFileName(), Path.GetTempFileName()
-    (fileIn, requestSerialize request) |> File.WriteAllText
-
+let invokeCommandLineAsync<'TRequest, 'TResponse> 
+        exePath argFormat 
+        (requestSerialize:'TRequest->string)
+        (responseDeserialize:string->'TResponse) 
+        (request:'TRequest) = async {
     let proc = 
-        (exePath, sprintf argFormat fileIn fileOut)
+        (exePath, requestSerialize request |> sprintf argFormat)
         |> ProcessStartInfo
         |> Process.Start
-    // proc.StandardOutput.ReadToEnd()
-
-    let tcs = TaskCompletionSource<'TResponse>()
-    let fileOutToResult _ = 
-        fileOut
-        |> File.ReadAllText
-        |> responseDeserialize
-        |> tcs.SetResult
-    proc.EnableRaisingEvents <- true
-    proc.Exited.Add fileOutToResult
-    tcs.Task
+    let! outputText =
+        proc.StandardOutput.ReadToEndAsync() 
+        |> Async.AwaitTask
+    return responseDeserialize outputText }
 
 let estimateFromMatrixAndShiftsAsync model = async {
-        let { SroMatrix = matrix; 
-                IecCouchShift = couchShift; } = model
-        let invokeFunc = invokeExternalAsync<string, string> "python" "sro_decoder_estimate %s%s" id id
-        let! result = invokeFunc (matrix.ToString()) |> Async.AwaitTask
-        let newGeometryEstimates = uniformGeometryEstimates
-        return newGeometryEstimates, couchShift  }
+    let { SroMatrix = matrix; 
+            IecCouchShift = couchShift; } = model
+    let invokeFunc = 
+        invokeCommandLineAsync<decimal[], decimal[]> 
+            "python" "sro_decoder_predict.py %s" 
+                (fun input -> 
+                    System.String.Join("/", input))
+                (fun output -> 
+                    // TODO skip to output line
+                    output.Split('/') |> Array.map decimal)
+    let! result = 
+        matrix 
+        |> Array.append [| couchShift.Rx; couchShift.Ry; couchShift.Rz |]
+        |> invokeFunc
+    let newGeometryEstimates : GeometryEstimates = function
+    | _, RxRyRzT -> result.[0]
+    | _, RzRyRxT -> result.[1]
+    | _, TRxRyRz -> result.[2]
+    | _, TRzRyRx -> result.[3]
+    return newGeometryEstimates, couchShift  }
 
 let optimizeWithConstraintsAsync model = async {
     let { SroMatrix = matrix; 

@@ -28,7 +28,7 @@ class TableModel(Aggregate):
                         [('rotation_order', self.rotation_order),
                             ('rotations', self.rotations),
                             ('matrix', self.matrix)])
-        return "\n\t".join([super().__str__()] + str_props)
+        return "\n\t".join([super().__str__()] + list(str_props))
         # return '{}\n\trotation_order={}\n\trotations={}\n\tmatrix={}'.format(hdr, self.rotation_order, self.rotations, self.matrix)
 
     def set_rxyz(self, rx:float, ry:float, rz:float) -> None:

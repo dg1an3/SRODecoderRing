@@ -1,3 +1,4 @@
+from uuid import UUID
 from .common import Repository
 from .TableDomainModel import TableModel
 

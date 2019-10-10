@@ -1,5 +1,5 @@
 from .common import Repository
-from TableDomainModel import TableModel
+from .TableDomainModel import TableModel
 
 def sample_model_for_training(repo:Repository, id:UUID, count):
     """Service layer that will obtain a TableModel given an ID, and then produce count samples for training."""

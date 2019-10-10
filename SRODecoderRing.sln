@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmish.DecoderUI.Views", "D
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Elmish.DecoderUI", "DecoderUI\Elmish.DecoderUI\Elmish.DecoderUI.fsproj", "{A9E131F5-31C6-4BCA-9EFD-97DE3B4F5B02}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DomainModel", "TableDomainModel\DomainModel.pyproj", "{124361BA-0E53-4AF3-8F48-258CEFA1F22E}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DomainModel", "DomainModel\DomainModel.pyproj", "{124361BA-0E53-4AF3-8F48-258CEFA1F22E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

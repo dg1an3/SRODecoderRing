@@ -1,4 +1,6 @@
 from uuid import UUID
+import numpy as np
+
 from .common import Repository
 from .TableDomainModel import TableModel
 

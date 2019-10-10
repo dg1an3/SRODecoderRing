@@ -1,4 +1,4 @@
-from common import Repository
+from .common import Repository
 from TableDomainModel import TableModel
 
 def sample_model_for_training(repo:Repository, id:UUID, count):

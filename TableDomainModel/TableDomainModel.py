@@ -11,6 +11,7 @@ def random_vector(n, mag) -> np.ndarray:
     """Helper function to generate a vector in random direction of given magnitude."""
     return 2.0 * mag * (0.5-np.random.random(size=n))
 
+from uuid import UUID
 from .common import Aggregate
 
 class TableModel(Aggregate):

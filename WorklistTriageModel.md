@@ -5,9 +5,10 @@ At C-MIMI in Austin this year, one of the talks that caught my attention was on 
  It uses deep learning to prioritize and filter mammograms.
 
 A similar approach could benefit RT image review. 
-Experience with Mosaiq image review users indicates a benefit from anything that can streamline the workflow. A triage model would predict:
-- Which images are most likely to need more intensive review?
-- Which are least likely to result in any adjustment?
+Experience indicates that Mosaiq image review users benefit from any streamlining of workflow. 
+A triage model would predict:
+- Which images are most likely to need more intensive review
+- Which are least likely to result in any adjustment
 
 This information could be used to:
 - Prioritize the user‘s worklist

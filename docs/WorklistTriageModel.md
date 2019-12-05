@@ -1,7 +1,7 @@
 
 Radiotherapy Image Review Worklist Triage
 --------------
-At C-MIMI in Austin this year, one of the talks that caught my attention was on a system called [DeepCAT](), which is a worklist triage system for mammogram screening.
+At C-MIMI in Austin this year, one of the talks that caught my attention was on a system called [DeepCAT](https://cdn.ymaws.com/siim.org/resource/resmgr/mimi19/oral2/DeepCAT_Yi.pdf), which is a worklist triage system for mammogram screening.
  It uses deep learning to prioritize and filter mammograms.
 
 A similar approach could benefit RT image review. 
